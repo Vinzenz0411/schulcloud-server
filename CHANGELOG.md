@@ -30,6 +30,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Fixed
 
+- SC-9211 - removed notification service from e2e tests
 - SC-9197 - Limiting the max workers for jest to 2 workers, if the default mechanism runs it's go up to infinity workers and if one die the test never stop
 - SC-9202 - fix sending of registration link mails 
 
