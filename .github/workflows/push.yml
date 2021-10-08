@@ -61,5 +61,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: hpi-schul-cloud/schulcloud-server
+          repository: hpi-schul-cloud/schulcloud-server@d4152a262087a5bd124213e99e26da448dce4111
           event-type: e2e-unstable
