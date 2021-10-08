@@ -1,0 +1,42 @@
+---
+name: Build and push Docker Image
+
+on:
+  repository_dispatch:
+    types: [dev-deploy]
+  workflow_dispatch:
+    inputs:
+      sc-branch:
+        description: 'SC Branch or tag'
+        required: true
+
+jobs:
+    e2e-unstable:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: |
+                temp=${{ github.event.client_payload.branch }}
+                git_ref_name=${temp:-'${{ github.event.inputs.sc-branch }}'}
+                echo "git_ref_name=$git_ref_name" >> $GITHUB_ENV
+                echo git_ref_name $git_ref_name
+            - name: run git change
+              run: |
+                  git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+                  git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "ssh://git@github.com/"
+                  git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "git@github.com:"
+            - name: execute tests
+              run: curl "https://raw.githubusercontent.com/hpi-schul-cloud/end-to-end-tests/main/scripts/ci/fetch.github.sh" | bash -s unstable
+              env:
+                  ES_USER: ${{ secrets.ES_USER }}
+                  ES_PASSWORD: ${{ secrets.ES_PASSWORD }}
+                  SECRET_ES_MERLIN_USERNAME: ${{ secrets.SECRET_ES_MERLIN_USERNAME }}
+                  SECRET_ES_MERLIN_PW: ${{ secrets.SECRET_ES_MERLIN_PW }}
+                  DOCKER_ID: ${{ secrets.DOCKER_ID }}
+                  MY_DOCKER_PASSWORD: ${{ secrets.MY_DOCKER_PASSWORD }}
+            - uses: actions/upload-artifact@v1
+              name: upload results
+              if: always()
+              with:
+                  name: report
+                  path: end-to-end-tests/reports
