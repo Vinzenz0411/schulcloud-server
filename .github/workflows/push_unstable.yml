@@ -3,7 +3,7 @@ name: Build and push Docker Image
 
 on:
   repository_dispatch:
-    types: [dev-deploy]
+    types: [e2e-unstable]
   workflow_dispatch:
     inputs:
       sc-branch:
