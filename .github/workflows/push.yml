@@ -60,6 +60,7 @@ jobs:
       - name: Dispatch to E2E
         uses: peter-evans/repository-dispatch@v1
         with:
+          ref: 6d074902bebbfd87c6d34fd47d9e5d4ccf135ab0
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: hpi-schul-cloud/schulcloud-server@6d074902bebbfd87c6d34fd47d9e5d4ccf135ab0
+          repository: hpi-schul-cloud/schulcloud-server
           event-type: e2e-unstable
