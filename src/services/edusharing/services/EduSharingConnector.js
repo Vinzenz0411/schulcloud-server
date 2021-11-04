@@ -188,20 +188,22 @@ class EduSharingConnector {
 
 		if (Configuration.get('FEATURE_ES_SEARCHABLE_ENABLED') && !collection) {
 			criterias.push({
-				property: 'ccm:hpi_searchable',
-				values: ['1'],
+				// property: 'ccm:hpi_searchable',
+				// values: ['1'],
+				property: 'ccm:lom_annotation',
+				values: [`{'description': 'searchable==1', 'entity': 'crawler'}`],
 			});
 		}
 
 		if (Configuration.get('FEATURE_ES_COLLECTIONS_ENABLED') === false) {
 			criterias.push({
-				property: 'ccm:hpi_lom_general_aggregationlevel',
+				property: 'cclom:aggregationlevel',
 				values: ['1'],
 			});
 		} else if (collection) {
 			criterias.push({ property: 'ngsearchword', values: ['*'] });
 			criterias.push({
-				property: 'ccm:hpi_lom_relation',
+				property: 'ccm:lom_relation',
 				values: [`{'kind': 'ispartof', 'resource': {'identifier': ['${collection}']}}`],
 			});
 		} else {
