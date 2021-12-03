@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { EntityId, IPagination, Counted, ICurrentUser, SortOrder, TaskWithStatusVo, ITaskStatus } from '@shared/domain';
+import { IPagination, Counted, ICurrentUser, SortOrder, TaskWithStatusVo, ITaskStatus, User } from '@shared/domain';
 
-import { TaskRepo } from '@shared/repo';
+import { TaskRepo, UserRepo } from '@shared/repo';
 
 import { TaskAuthorizationService, TaskParentPermission } from './task.authorization.service';
 
@@ -12,21 +12,31 @@ export enum TaskDashBoardPermission {
 
 @Injectable()
 export class TaskUC {
-	constructor(private readonly taskRepo: TaskRepo, private readonly authorizationService: TaskAuthorizationService) {}
+	constructor(
+		private readonly taskRepo: TaskRepo,
+		private readonly authorizationService: TaskAuthorizationService,
+		private readonly userRepo: UserRepo
+	) {}
 
 	// This uc includes 4 awaits + 1 from authentication services.
 	// 5 awaits from with db calls from one request against the api is for me the absolut maximum what we should allowed.
 	// TODO: clearify if Admin need TASK_DASHBOARD_TEACHER_VIEW_V3 permission
 	async findAllFinished(currentUser: ICurrentUser, pagination?: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
-		// TODO: move to this.authorizationService ?
-		if (!this.hasOneOfTheTaskDashboardPermissions(currentUser)) {
+		// TODO do we have to check if user exists here? currently this is done in JWTStrategy.validate()
+		const user = await this.userRepo.findById(currentUser.userId);
+
+		// TODO: move to this.authorizationService? This can be determined with the User entity instead of the ICurrentUser.
+		if (
+			!this.hasTaskDashboardPermission(currentUser, TaskDashBoardPermission.teacherDashboard) &&
+			!this.hasTaskDashboardPermission(currentUser, TaskDashBoardPermission.studentDashboard)
+		) {
 			throw new UnauthorizedException();
 		}
 
 		const { userId } = currentUser;
 
-		const courses = await this.authorizationService.getPermittedCourses(userId, TaskParentPermission.read);
-		const lessons = await this.authorizationService.getPermittedLessons(userId, courses);
+		const courses = await this.authorizationService.getPermittedCourses(user, TaskParentPermission.read);
+		const lessons = await this.authorizationService.getPermittedLessons(user, courses);
 
 		const openCourseIds = courses.filter((c) => !c.isFinished()).map((c) => c.id);
 		const finishedCourseIds = courses.filter((c) => c.isFinished()).map((c) => c.id);
@@ -46,11 +56,11 @@ export class TaskUC {
 
 		const taskWithStatusVos = tasks.map((task) => {
 			let status: ITaskStatus;
-			if (this.authorizationService.hasTaskPermission(task, userId, TaskParentPermission.write)) {
-				status = task.createTeacherStatusForUser(userId);
+			if (this.authorizationService.hasTaskPermission(user, task, TaskParentPermission.write)) {
+				status = task.createTeacherStatusForUser(user);
 			} else {
 				// TaskParentPermission.read check is not needed on this place
-				status = task.createStudentStatusForUser(userId);
+				status = task.createStudentStatusForUser(user);
 			}
 
 			return new TaskWithStatusVo(task, status);
@@ -65,10 +75,13 @@ export class TaskUC {
 	async findAll(currentUser: ICurrentUser, pagination: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
 		let response: Counted<TaskWithStatusVo[]>;
 
+		// TODO do we have to check if user exists here? currently this is done in JWTStrategy.validate()
+		const user = await this.userRepo.findById(currentUser.userId);
+
 		if (this.hasTaskDashboardPermission(currentUser, TaskDashBoardPermission.studentDashboard)) {
-			response = await this.findAllForStudent(currentUser.userId, pagination);
+			response = await this.findAllForStudent(user, pagination);
 		} else if (this.hasTaskDashboardPermission(currentUser, TaskDashBoardPermission.teacherDashboard)) {
-			response = await this.findAllForTeacher(currentUser.userId, pagination);
+			response = await this.findAllForTeacher(user, pagination);
 		} else {
 			throw new UnauthorizedException();
 		}
@@ -76,13 +89,13 @@ export class TaskUC {
 		return response;
 	}
 
-	private async findAllForStudent(userId: EntityId, pagination: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
-		const courses = await this.authorizationService.getPermittedCourses(userId, TaskParentPermission.read);
+	private async findAllForStudent(user: User, pagination: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
+		const courses = await this.authorizationService.getPermittedCourses(user, TaskParentPermission.read);
 		const openCourses = courses.filter((c) => !c.isFinished());
-		const lessons = await this.authorizationService.getPermittedLessons(userId, openCourses);
+		const lessons = await this.authorizationService.getPermittedLessons(user, openCourses);
 
 		const dueDate = this.getDefaultMaxDueDate();
-		const notFinished = { userId, value: false };
+		const notFinished = { userId: user.id, value: false };
 
 		const [tasks, total] = await this.taskRepo.findAllByParentIds(
 			{
@@ -97,23 +110,23 @@ export class TaskUC {
 		);
 
 		const taskWithStatusVos = tasks.map((task) => {
-			const status = task.createStudentStatusForUser(userId);
+			const status = task.createStudentStatusForUser(user);
 			return new TaskWithStatusVo(task, status);
 		});
 
 		return [taskWithStatusVos, total];
 	}
 
-	private async findAllForTeacher(userId: EntityId, pagination: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
-		const courses = await this.authorizationService.getPermittedCourses(userId, TaskParentPermission.write);
+	private async findAllForTeacher(user: User, pagination: IPagination): Promise<Counted<TaskWithStatusVo[]>> {
+		const courses = await this.authorizationService.getPermittedCourses(user, TaskParentPermission.write);
 		const openCourses = courses.filter((c) => !c.isFinished());
-		const lessons = await this.authorizationService.getPermittedLessons(userId, openCourses);
+		const lessons = await this.authorizationService.getPermittedLessons(user, openCourses);
 
-		const notFinished = { userId, value: false };
+		const notFinished = { userId: user.id, value: false };
 
 		const [tasks, total] = await this.taskRepo.findAllByParentIds(
 			{
-				creatorId: userId,
+				creatorId: user.id,
 				courseIds: openCourses.map((c) => c.id),
 				lessonIds: lessons.map((l) => l.id),
 			},
@@ -125,7 +138,7 @@ export class TaskUC {
 		);
 
 		const taskWithStatusVos = tasks.map((task) => {
-			const status = task.createTeacherStatusForUser(userId);
+			const status = task.createTeacherStatusForUser(user);
 			return new TaskWithStatusVo(task, status);
 		});
 
@@ -135,18 +148,6 @@ export class TaskUC {
 	// TODO: move to this.authorizationService ?
 	private hasTaskDashboardPermission(currentUser: ICurrentUser, permission: TaskDashBoardPermission): boolean {
 		const hasPermission = currentUser.user.permissions.includes(permission);
-
-		return hasPermission;
-	}
-
-	// TODO: move to this.authorizationService ?
-	// think about hasOneOfThePassedPermission, hasAnyOfThePassedPermission,
-	// or permission are hold in authorizationService
-	private hasOneOfTheTaskDashboardPermissions(currentUser: ICurrentUser) {
-		const { permissions } = currentUser.user;
-		const hasPermission =
-			permissions.includes(TaskDashBoardPermission.studentDashboard) ||
-			permissions.includes(TaskDashBoardPermission.teacherDashboard);
 
 		return hasPermission;
 	}

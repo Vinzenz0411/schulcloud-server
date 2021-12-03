@@ -1,17 +1,15 @@
-import {
-	courseFactory,
-	lessonFactory,
-	taskFactory,
-	userFactory,
-	submissionFactory,
-	setupEntities,
-} from '@shared/testing';
-
-import { Task } from './task.entity';
+import { MikroORM } from '@mikro-orm/core';
+import { taskFactory, userFactory, submissionFactory, setupEntities, courseFactory } from '@shared/testing';
 
 describe('Task Entity', () => {
+	let orm: MikroORM;
+
 	beforeAll(async () => {
-		await setupEntities();
+		orm = await setupEntities();
+	});
+
+	afterAll(async () => {
+		await orm.close();
 	});
 
 	describe('isDraft', () => {
@@ -37,218 +35,122 @@ describe('Task Entity', () => {
 		});
 	});
 
-	describe('getSubmittedUserIds', () => {
-		it('should use save private getSubmissionItems methode to fetch submissions', () => {
-			const task = taskFactory.build();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const spy = jest.spyOn(Task.prototype as any, 'getSubmissionsItems');
-
-			task.getSubmittedUserIds();
-
-			expect(spy).toHaveBeenCalled();
+	describe('getSubmittedUsers', () => {
+		it('should return the student who has submitted to the task', () => {
+			const submission = submissionFactory.build();
+			const task = taskFactory.build({ submissions: [submission] });
+			const users = task.getSubmittedUsers();
+			expect(users).toEqual([submission.student]);
 		});
 
-		it.todo('should validate if data are loaded');
+		it('should return an empty list if the task has no submissions', () => {
+			const task = taskFactory.build();
+			const users = task.getSubmittedUsers();
+			expect(users).toEqual([]);
+		});
 
-		describe('when submissions are loaded', () => {
-			it('should return a list of submitted userIds', () => {
-				const student = userFactory.build();
-				student.id = '0123456789ab';
+		it('should return the list of unique students of all task submissions', () => {
+			const user = userFactory.build();
+			const submissions = submissionFactory.buildList(2, { student: user });
+			const task = taskFactory.build({ submissions });
+			const users = task.getSubmittedUsers();
+			expect(users).toEqual([user]);
+		});
 
-				const task = taskFactory.build();
-				const submission = submissionFactory.build({ student, task });
-				task.submissions.add(submission);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student.id]);
-			});
-
-			it('should work for multiple submissions', () => {
-				const student1 = userFactory.build();
-				student1.id = '0123456789ab';
-
-				const student2 = userFactory.build();
-				student2.id = '0123456789cd';
-
-				const task = taskFactory.build();
-				const submission1 = submissionFactory.build({ student: student1, task });
-				const submission2 = submissionFactory.build({ student: student2, task });
-				task.submissions.add(submission1, submission2);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student1.id, student2.id]);
-			});
-
-			it('should work for a user that have multiple submissions', () => {
-				const student = userFactory.build();
-				student.id = '0123456789ab';
-
-				const task = taskFactory.build();
-				const submission1 = submissionFactory.build({ student, task });
-				const submission2 = submissionFactory.build({ student, task });
-				task.submissions.add(submission1, submission2);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student.id, student.id]);
-			});
+		it('should return the number of different students of all task submissions', () => {
+			const user1 = userFactory.build();
+			const submissionsOfUser1 = submissionFactory.buildList(2, { student: user1 });
+			const user2 = userFactory.build();
+			const submissionsOfUser2 = submissionFactory.buildList(1, { student: user2 });
+			const task = taskFactory.build({ submissions: [...submissionsOfUser1, ...submissionsOfUser2] });
+			const users = task.getSubmittedUsers();
+			expect(users).toEqual([user1, user2]);
 		});
 	});
 
 	describe('getNumberOfSubmittedUsers', () => {
 		it('should call getSubmittedUserIds', () => {
 			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'getSubmittedUserIds');
+			const spy = jest.spyOn(task, 'getSubmittedUsers');
 
 			task.getNumberOfSubmittedUsers();
 
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should count users correctly', () => {
-			const student1 = userFactory.build();
-			student1.id = '0123456789ab';
-
-			const student2 = userFactory.build();
-			student2.id = '0123456789cd';
-
-			const task = taskFactory.build();
-			const submission1 = submissionFactory.build({ student: student1, task });
-			const submission2 = submissionFactory.build({ student: student2, task });
-			task.submissions.add(submission1, submission2);
-
-			const result = task.getNumberOfSubmittedUsers();
-
-			expect(result).toEqual(2);
-		});
-
-		it('should count a userId one time', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-
-			const task = taskFactory.build();
-			const submission1 = submissionFactory.build({ student, task });
-			const submission2 = submissionFactory.build({ student, task });
-			task.submissions.add(submission1, submission2);
-
-			const result = task.getNumberOfSubmittedUsers();
-
-			expect(result).toEqual(1);
+		it('should return the unique number of students that submitted to the task', () => {
+			const user1 = userFactory.build();
+			const submissionsOfUser1 = submissionFactory.buildList(2, { student: user1 });
+			const user2 = userFactory.build();
+			const submissionsOfUser2 = submissionFactory.buildList(1, { student: user2 });
+			const task = taskFactory.build({ submissions: [...submissionsOfUser1, ...submissionsOfUser2] });
+			const number = task.getNumberOfSubmittedUsers();
+			expect(number).toEqual(2);
+			expect(number).toEqual(task.getSubmittedUsers().length);
 		});
 	});
 
-	describe('getGradedUserIds', () => {
-		it('should use save private getSubmissionItems methode to fetch submissions', () => {
-			const task = taskFactory.build();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const spy = jest.spyOn(Task.prototype as any, 'getSubmissionsItems');
-
-			task.getGradedUserIds();
-
-			expect(spy).toHaveBeenCalled();
+	describe('getGradedUsers', () => {
+		it('should return the student whos submission is graded', () => {
+			const submission1 = submissionFactory.build();
+			const submission2 = submissionFactory.build();
+			jest.spyOn(submission1, 'isGraded').mockReturnValue(true);
+			jest.spyOn(submission2, 'isGraded').mockReturnValue(false);
+			const task = taskFactory.build({ submissions: [submission1, submission2] });
+			const users = task.getGradedUsers();
+			expect(users).toEqual([submission1.student]);
 		});
 
-		describe('when submissions are loaded', () => {
-			it('should only work for graded submissions', () => {
-				const student = userFactory.build();
-				student.id = '0123456789ab';
+		it('should return an empty list if the task has no graded submissions', () => {
+			const task = taskFactory.build();
+			const users = task.getGradedUsers();
+			expect(users).toEqual([]);
+		});
 
-				const task = taskFactory.build();
-				const submission = submissionFactory.graded().build({ student, task });
-				task.submissions.add(submission);
+		it('should return the list of unique students of all graded task submissions', () => {
+			const user = userFactory.build();
+			const submissions = submissionFactory.buildList(2, { student: user });
+			jest.spyOn(submissions[0], 'isGraded').mockReturnValue(true);
+			jest.spyOn(submissions[1], 'isGraded').mockReturnValue(true);
+			const task = taskFactory.build({ submissions });
+			const users = task.getGradedUsers();
+			expect(users).toEqual([user]);
+		});
 
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student.id]);
-			});
-
-			it('should not work for not graded submissions', () => {
-				const student = userFactory.build();
-				student.id = '0123456789ab';
-
-				const task = taskFactory.build();
-				const submission = submissionFactory.build({ student, task });
-				task.submissions.add(submission);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student.id]);
-			});
-
-			it('should return a list of graded userIds', () => {
-				const student1 = userFactory.build();
-				student1.id = '0123456789ab';
-
-				const student2 = userFactory.build();
-				student2.id = '0123456789cd';
-
-				const task = taskFactory.build();
-				const submission1 = submissionFactory.graded().build({ student: student1, task });
-				const submission2 = submissionFactory.graded().build({ student: student2, task });
-				task.submissions.add(submission1, submission2);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student1.id, student2.id]);
-			});
-
-			it('should work for multiple graded submissions ', () => {
-				const student = userFactory.build();
-				student.id = '0123456789ab';
-
-				const task = taskFactory.build();
-				const submission1 = submissionFactory.graded().build({ student, task });
-				const submission2 = submissionFactory.graded().build({ student, task });
-				task.submissions.add(submission1, submission2);
-
-				const result = task.getSubmittedUserIds();
-
-				expect(result).toEqual([student.id, student.id]);
-			});
+		it('should return the number of different students of all task submissions', () => {
+			const user1 = userFactory.build();
+			const submissionsOfUser1 = submissionFactory.buildList(2, { student: user1 });
+			jest.spyOn(submissionsOfUser1[0], 'isGraded').mockReturnValue(true);
+			const user2 = userFactory.build();
+			const submissionsOfUser2 = submissionFactory.buildList(1, { student: user2 });
+			jest.spyOn(submissionsOfUser2[0], 'isGraded').mockReturnValue(true);
+			const task = taskFactory.build({ submissions: [...submissionsOfUser1, ...submissionsOfUser2] });
+			const users = task.getGradedUsers();
+			expect(users).toEqual([user1, user2]);
 		});
 	});
 
 	describe('getNumberOfGradedUsers', () => {
-		it('should call getGradedUserIds', () => {
+		it('should call getSubmittedUserIds', () => {
 			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'getGradedUserIds');
+			const spy = jest.spyOn(task, 'getGradedUsers');
 
 			task.getNumberOfGradedUsers();
 
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should count userids correctly', () => {
-			const student1 = userFactory.build();
-			student1.id = '0123456789ab';
-
-			const student2 = userFactory.build();
-			student2.id = '0123456789cd';
-
-			const task = taskFactory.build();
-			const submission1 = submissionFactory.graded().build({ student: student1, task });
-			const submission2 = submissionFactory.graded().build({ student: student2, task });
-			task.submissions.add(submission1, submission2);
-
-			const result = task.getNumberOfSubmittedUsers();
-
-			expect(result).toEqual(2);
-		});
-
-		it('should count a userId one time', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-
-			const task = taskFactory.build();
-			const submission1 = submissionFactory.graded().build({ student, task });
-			const submission2 = submissionFactory.graded().build({ student, task });
-			task.submissions.add(submission1, submission2);
-
-			const result = task.getNumberOfSubmittedUsers();
-
-			expect(result).toEqual(1);
+		it('should return the unique number of students that submitted to the task', () => {
+			const user1 = userFactory.build();
+			const submissionsOfUser1 = submissionFactory.buildList(2, { student: user1 });
+			jest.spyOn(submissionsOfUser1[0], 'isGraded').mockReturnValue(true);
+			const user2 = userFactory.build();
+			const submissionsOfUser2 = submissionFactory.buildList(1, { student: user2 });
+			jest.spyOn(submissionsOfUser2[0], 'isGraded').mockReturnValue(true);
+			const task = taskFactory.build({ submissions: [...submissionsOfUser1, ...submissionsOfUser2] });
+			const number = task.getNumberOfGradedUsers();
+			expect(number).toEqual(2);
+			expect(number).toEqual(task.getGradedUsers().length);
 		});
 	});
 
@@ -275,10 +177,8 @@ describe('Task Entity', () => {
 			});
 
 			it('should return the result', () => {
-				const student1 = userFactory.build();
-				const student2 = userFactory.build();
-				const course = courseFactory.build();
-				course.students.add(student1, student2);
+				const students = userFactory.buildList(2);
+				const course = courseFactory.build({ students });
 				const task = taskFactory.build({ course });
 
 				const result = task.getMaxSubmissions();
@@ -288,277 +188,277 @@ describe('Task Entity', () => {
 		});
 	});
 
-	describe('createTeacherStatusForUser', () => {
-		it('should call getNumberOfSubmittedUsers and return the result as submitted property', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'getNumberOfSubmittedUsers').mockImplementation(() => 5);
+	// describe('createTeacherStatusForUser', () => {
+	// 	it('should call getNumberOfSubmittedUsers and return the result as submitted property', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'getNumberOfSubmittedUsers').mockImplementation(() => 5);
 
-			const result = task.createTeacherStatusForUser('1');
+	// 		const result = task.createTeacherStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.submitted).toEqual(5);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.submitted).toEqual(5);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call getNumberOfGradedUsers and return the result as graded property', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'getNumberOfGradedUsers').mockImplementation(() => 5);
+	// 	it('should call getNumberOfGradedUsers and return the result as graded property', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'getNumberOfGradedUsers').mockImplementation(() => 5);
 
-			const result = task.createTeacherStatusForUser('1');
+	// 		const result = task.createTeacherStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.graded).toEqual(5);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.graded).toEqual(5);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call getMaxSubmissions and return the result as maxSubmissions property', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'getMaxSubmissions').mockImplementation(() => 5);
+	// 	it('should call getMaxSubmissions and return the result as maxSubmissions property', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'getMaxSubmissions').mockImplementation(() => 5);
 
-			const result = task.createTeacherStatusForUser('1');
+	// 		const result = task.createTeacherStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.maxSubmissions).toEqual(5);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.maxSubmissions).toEqual(5);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call isDraft and return the result as isDraft property', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isDraft').mockImplementation(() => true);
+	// 	it('should call isDraft and return the result as isDraft property', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isDraft').mockImplementation(() => true);
 
-			const result = task.createTeacherStatusForUser('1');
+	// 		const result = task.createTeacherStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.isDraft).toBe(true);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.isDraft).toBe(true);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		describe('when parent is a course', () => {
-			it('should call course.getSubstitutionTeacherIds', () => {
-				const user = userFactory.build();
-				user.id = '0123456789ab';
-				const course = courseFactory.build();
-				const task = taskFactory.build({ course });
-				const spy = jest.spyOn(course, 'getSubstitutionTeacherIds');
+	// 	describe('when parent is a course', () => {
+	// 		it('should call course.getSubstitutionTeacherIds', () => {
+	// 			const user = userFactory.build();
+	// 			user.id = '0123456789ab';
+	// 			const course = courseFactory.build();
+	// 			const task = taskFactory.build({ course });
+	// 			const spy = jest.spyOn(course, 'getSubstitutionTeacherIds');
 
-				task.createTeacherStatusForUser(user.id);
+	// 			task.createTeacherStatusForUser(user.id);
 
-				expect(spy).toHaveBeenCalled();
-			});
+	// 			expect(spy).toHaveBeenCalled();
+	// 		});
 
-			it('should return true if userId is part of it.', () => {
-				const user = userFactory.build();
-				user.id = '0123456789ab';
-				const course = courseFactory.build();
-				course.substitutionTeachers.add(user);
-				const task = taskFactory.build({ course });
+	// 		it('should return true if userId is part of it.', () => {
+	// 			const user = userFactory.build();
+	// 			user.id = '0123456789ab';
+	// 			const course = courseFactory.build();
+	// 			course.substitutionTeachers.add(user);
+	// 			const task = taskFactory.build({ course });
 
-				const result = task.createTeacherStatusForUser(user.id);
+	// 			const result = task.createTeacherStatusForUser(user.id);
 
-				expect(result.isSubstitutionTeacher).toBe(true);
-			});
+	// 			expect(result.isSubstitutionTeacher).toBe(true);
+	// 		});
 
-			it('should return false if userId not is part of it', () => {
-				const user = userFactory.build();
-				user.id = '0123456789ab';
-				const course = courseFactory.build();
+	// 		it('should return false if userId not is part of it', () => {
+	// 			const user = userFactory.build();
+	// 			user.id = '0123456789ab';
+	// 			const course = courseFactory.build();
 
-				const task = taskFactory.build({ course });
+	// 			const task = taskFactory.build({ course });
 
-				const result = task.createTeacherStatusForUser(user.id);
+	// 			const result = task.createTeacherStatusForUser(user.id);
 
-				expect(result.isSubstitutionTeacher).toBe(false);
-			});
-		});
-	});
+	// 			expect(result.isSubstitutionTeacher).toBe(false);
+	// 		});
+	// 	});
+	// });
 
-	describe('isSubmittedForUser', () => {
-		it('should call getNumberOfSubmittedUsers and return true if userId is part of it.', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-			const task = taskFactory.build();
-			const submission = submissionFactory.build({ student, task });
-			task.submissions.add(submission);
+	// describe('isSubmittedForUser', () => {
+	// 	it('should call getNumberOfSubmittedUsers and return true if userId is part of it.', () => {
+	// 		const student = userFactory.build();
+	// 		student.id = '0123456789ab';
+	// 		const task = taskFactory.build();
+	// 		const submission = submissionFactory.build({ student, task });
+	// 		task.submissions.add(submission);
 
-			const spy = jest.spyOn(task, 'getSubmittedUserIds');
+	// 		const spy = jest.spyOn(task, 'getSubmittedUserIds');
 
-			const result = task.isSubmittedForUser(student.id);
+	// 		const result = task.isSubmittedForUser(student.id);
 
-			expect(spy).toHaveBeenCalled();
-			expect(result).toBe(true);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result).toBe(true);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call getNumberOfSubmittedUsers and return false if userId is not part of it.', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-			const task = taskFactory.build();
-			const submission = submissionFactory.build({ student, task });
-			task.submissions.add(submission);
+	// 	it('should call getNumberOfSubmittedUsers and return false if userId is not part of it.', () => {
+	// 		const student = userFactory.build();
+	// 		student.id = '0123456789ab';
+	// 		const task = taskFactory.build();
+	// 		const submission = submissionFactory.build({ student, task });
+	// 		task.submissions.add(submission);
 
-			const spy = jest.spyOn(task, 'getSubmittedUserIds');
+	// 		const spy = jest.spyOn(task, 'getSubmittedUserIds');
 
-			const result = task.isSubmittedForUser('1');
+	// 		const result = task.isSubmittedForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result).toBe(false);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result).toBe(false);
 
-			spy.mockReset();
-		});
-	});
+	// 		spy.mockReset();
+	// 	});
+	// });
 
-	describe('isGradedForUser', () => {
-		it('should call getGradedUserIds and return true if userId is part of it.', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-			const task = taskFactory.build();
-			const submission = submissionFactory.graded().build({ student, task });
+	// describe('isGradedForUser', () => {
+	// 	it('should call getGradedUserIds and return true if userId is part of it.', () => {
+	// 		const student = userFactory.build();
+	// 		student.id = '0123456789ab';
+	// 		const task = taskFactory.build();
+	// 		const submission = submissionFactory.graded().build({ student, task });
 
-			task.submissions.add(submission);
+	// 		task.submissions.add(submission);
 
-			const spy = jest.spyOn(task, 'getGradedUserIds');
+	// 		const spy = jest.spyOn(task, 'getGradedUserIds');
 
-			const result = task.isGradedForUser(student.id);
+	// 		const result = task.isGradedForUser(student.id);
 
-			expect(spy).toHaveBeenCalled();
-			expect(result).toBe(true);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result).toBe(true);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call getGradedUserIds and return false if userId is not part of it.', () => {
-			const student = userFactory.build();
-			student.id = '0123456789ab';
-			const task = taskFactory.build();
-			const submission = submissionFactory.graded().build({ student, task });
-			task.submissions.add(submission);
+	// 	it('should call getGradedUserIds and return false if userId is not part of it.', () => {
+	// 		const student = userFactory.build();
+	// 		student.id = '0123456789ab';
+	// 		const task = taskFactory.build();
+	// 		const submission = submissionFactory.graded().build({ student, task });
+	// 		task.submissions.add(submission);
 
-			const spy = jest.spyOn(task, 'getGradedUserIds');
+	// 		const spy = jest.spyOn(task, 'getGradedUserIds');
 
-			const result = task.isGradedForUser('1');
+	// 		const result = task.isGradedForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result).toBe(false);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result).toBe(false);
 
-			spy.mockReset();
-		});
-	});
+	// 		spy.mockReset();
+	// 	});
+	// });
 
-	describe('createStudentStatusForUser', () => {
-		it('should call isSubmittedForUser and return 1 instant of true for property submitted', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isSubmittedForUser').mockImplementation(() => true);
+	// describe('createStudentStatusForUser', () => {
+	// 	it('should call isSubmittedForUser and return 1 instant of true for property submitted', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isSubmittedForUser').mockImplementation(() => true);
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.submitted).toEqual(1);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.submitted).toEqual(1);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call isSubmittedForUser and return 0 instant of false for property submitted', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isSubmittedForUser').mockImplementation(() => false);
+	// 	it('should call isSubmittedForUser and return 0 instant of false for property submitted', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isSubmittedForUser').mockImplementation(() => false);
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.submitted).toEqual(0);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.submitted).toEqual(0);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call isGradedForUser and return 1 instant of true for property graded', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isGradedForUser').mockImplementation(() => true);
+	// 	it('should call isGradedForUser and return 1 instant of true for property graded', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isGradedForUser').mockImplementation(() => true);
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.graded).toEqual(1);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.graded).toEqual(1);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should call isGradedForUser and return 0 instant of false for property graded', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isGradedForUser').mockImplementation(() => false);
+	// 	it('should call isGradedForUser and return 0 instant of false for property graded', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isGradedForUser').mockImplementation(() => false);
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.graded).toEqual(0);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.graded).toEqual(0);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should return 1 for property maxSubmissions', () => {
-			const task = taskFactory.build();
+	// 	it('should return 1 for property maxSubmissions', () => {
+	// 		const task = taskFactory.build();
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(result.maxSubmissions).toEqual(1);
-		});
+	// 		expect(result.maxSubmissions).toEqual(1);
+	// 	});
 
-		it('should call isDraft and return the result as isDraft property', () => {
-			const task = taskFactory.build();
-			const spy = jest.spyOn(task, 'isDraft').mockImplementation(() => false);
+	// 	it('should call isDraft and return the result as isDraft property', () => {
+	// 		const task = taskFactory.build();
+	// 		const spy = jest.spyOn(task, 'isDraft').mockImplementation(() => false);
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(spy).toHaveBeenCalled();
-			expect(result.isDraft).toEqual(false);
+	// 		expect(spy).toHaveBeenCalled();
+	// 		expect(result.isDraft).toEqual(false);
 
-			spy.mockReset();
-		});
+	// 		spy.mockReset();
+	// 	});
 
-		it('should return false for property isSubstitutionTeacher', () => {
-			const task = taskFactory.build();
+	// 	it('should return false for property isSubstitutionTeacher', () => {
+	// 		const task = taskFactory.build();
 
-			const result = task.createStudentStatusForUser('1');
+	// 		const result = task.createStudentStatusForUser('1');
 
-			expect(result.isSubstitutionTeacher).toEqual(false);
-		});
-	});
+	// 		expect(result.isSubstitutionTeacher).toEqual(false);
+	// 	});
+	// });
 
-	describe('getDescriptions', () => {
-		describe('when a course is set', () => {
-			it('should return the name and color of the course', () => {
-				const course = courseFactory.build();
-				const task = taskFactory.build({ course });
-				expect(task.getDescriptions().name).toEqual(course.name);
-				expect(task.getDescriptions().color).toEqual(course.color);
-			});
+	// describe('getDescriptions', () => {
+	// 	describe('when a course is set', () => {
+	// 		it('should return the name and color of the course', () => {
+	// 			const course = courseFactory.build();
+	// 			const task = taskFactory.build({ course });
+	// 			expect(task.getDescriptions().name).toEqual(course.name);
+	// 			expect(task.getDescriptions().color).toEqual(course.color);
+	// 		});
 
-			describe('when a lesson is set', () => {
-				it('should return the lesson name as description', () => {
-					const course = courseFactory.build();
-					const lesson = lessonFactory.build({ course });
-					const task = taskFactory.build({ course, lesson });
-					expect(task.getDescriptions().description).toEqual(lesson.name);
-				});
-			});
-			describe('when no lesson is set', () => {
-				it('should return an empty string as description', () => {
-					const course = courseFactory.build();
-					const task = taskFactory.build({ course });
-					expect(task.getDescriptions().description).toEqual('');
-				});
-			});
-		});
+	// 		describe('when a lesson is set', () => {
+	// 			it('should return the lesson name as description', () => {
+	// 				const course = courseFactory.build();
+	// 				const lesson = lessonFactory.build({ course });
+	// 				const task = taskFactory.build({ course, lesson });
+	// 				expect(task.getDescriptions().description).toEqual(lesson.name);
+	// 			});
+	// 		});
+	// 		describe('when no lesson is set', () => {
+	// 			it('should return an empty string as description', () => {
+	// 				const course = courseFactory.build();
+	// 				const task = taskFactory.build({ course });
+	// 				expect(task.getDescriptions().description).toEqual('');
+	// 			});
+	// 		});
+	// 	});
 
-		describe('when no course is set', () => {
-			it('should return the default name and color', () => {
-				const task = taskFactory.build();
-				expect(task.getDescriptions().name).toEqual('');
-				expect(task.getDescriptions().color).toEqual('#ACACAC');
-			});
-		});
-	});
+	// 	describe('when no course is set', () => {
+	// 		it('should return the default name and color', () => {
+	// 			const task = taskFactory.build();
+	// 			expect(task.getDescriptions().name).toEqual('');
+	// 			expect(task.getDescriptions().color).toEqual('#ACACAC');
+	// 		});
+	// 	});
+	// });
 });
