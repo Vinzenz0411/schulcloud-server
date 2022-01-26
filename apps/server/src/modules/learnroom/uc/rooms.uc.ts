@@ -1,20 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EntityId, Course, Task, TaskWithStatusVo, User } from '@shared/domain';
+import { EntityId, Course, Task, TaskWithStatusVo, User, IBoard } from '@shared/domain';
 import { CourseRepo, TaskRepo, UserRepo } from '@shared/repo';
-
-// TODO: move this somewhere else
-export interface Board {
-	roomId: string;
-	displayColor: string;
-	title: string;
-	elements: BoardElement[];
-}
-
-export type BoardElement = {
-	// TODO: should become fullblown class
-	type: string;
-	content: TaskWithStatusVo;
-};
 
 @Injectable()
 export class RoomsUc {
@@ -24,7 +10,7 @@ export class RoomsUc {
 		private readonly userRepo: UserRepo
 	) {}
 
-	async getBoard(roomId: EntityId, userId: EntityId): Promise<Board> {
+	async getBoard(roomId: EntityId, userId: EntityId): Promise<IBoard> {
 		const user = await this.userRepo.findById(userId, true);
 
 		const course = await this.courseRepo.findOne(roomId, userId);
@@ -46,7 +32,7 @@ export class RoomsUc {
 	}
 
 	// TODO: move somewhere else
-	private buildBoard(room: Course, tasks: TaskWithStatusVo[]): Board {
+	private buildBoard(room: Course, tasks: TaskWithStatusVo[]): IBoard {
 		const roomMetadata = room.getMetadata();
 		const board = {
 			roomId: roomMetadata.id,

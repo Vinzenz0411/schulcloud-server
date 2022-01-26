@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Course } from '@shared/domain';
+import { Course, IBoard } from '@shared/domain';
 import { BoardResponse, BoardElementResponse, BoardTaskResponse } from '../controller/dto/roomBoardResponse';
-import { Board } from '../uc/rooms.uc';
 import { BoardTaskStatusMapper } from './board-taskStatus.mapper';
 
 @Injectable()
 export class BoardMapper {
-	mapToResponse(board: Board): BoardResponse {
+	mapToResponse(board: IBoard): BoardResponse {
 		const elements = board.elements.map((element) => {
 			const { task: boardTask, status } = element.content;
 			const boardTaskDesc = boardTask.getDescriptions();
