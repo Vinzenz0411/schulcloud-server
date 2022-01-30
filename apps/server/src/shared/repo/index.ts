@@ -14,4 +14,5 @@ export * from './role';
 export * from './storageprovider';
 export * from './submission';
 export * from './task';
+export * from './team';
 export * from './user';
