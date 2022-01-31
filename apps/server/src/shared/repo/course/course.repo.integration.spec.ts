@@ -58,6 +58,7 @@ describe('course repo', () => {
 				'createdAt',
 				'description',
 				'name',
+				'primaryBoard',
 				'school',
 				'substitutionTeachers',
 				'teachers',

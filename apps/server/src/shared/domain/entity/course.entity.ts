@@ -4,6 +4,7 @@ import { ILearnroom } from '@shared/domain/interface';
 import { LearnroomMetadata, LearnroomTypes } from '../types';
 
 import { BaseEntityWithTimestamps } from './base.entity';
+import { Board } from './board.entity';
 import type { School } from './school.entity';
 import type { User } from './user.entity';
 
@@ -18,6 +19,7 @@ export interface ICourseProperties {
 	color?: string;
 	startDate?: Date;
 	untilDate?: Date;
+	primaryBoard?: Board;
 }
 
 // that is really really shit default handling :D constructor, getter, js default, em default...what the hell
@@ -55,6 +57,9 @@ export class Course extends BaseEntityWithTimestamps implements ILearnroom {
 	color: string = DEFAULT.color;
 
 	@Property()
+	primaryBoard: Board;
+
+	@Property()
 	startDate?: Date;
 
 	@Index({ name: 'activeCourses' })
@@ -72,6 +77,7 @@ export class Course extends BaseEntityWithTimestamps implements ILearnroom {
 		if (props.color) this.color = props.color;
 		if (props.untilDate) this.untilDate = props.untilDate;
 		if (props.startDate) this.startDate = props.startDate;
+		this.primaryBoard = props.primaryBoard || new Board({ references: [] });
 	}
 
 	getNumberOfStudents(): number {

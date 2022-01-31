@@ -1,4 +1,4 @@
-import { TaskWithStatusVo } from '@shared/domain/entity';
+import { TaskWithStatusVo } from '@shared/domain/entity/task.entity';
 
 export type BoardElementType = {
 	// TODO: should become fullblown class
