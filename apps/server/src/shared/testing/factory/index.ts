@@ -8,4 +8,5 @@ export * from './school.factory';
 export * from './storageprovider.factory';
 export * from './submission.factory';
 export * from './task.factory';
+export * from './team.factory';
 export * from './user.factory';

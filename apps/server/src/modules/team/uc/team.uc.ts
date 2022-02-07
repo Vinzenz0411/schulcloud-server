@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PaginationQuery } from '@shared/controller';
 import {
 	EntityId,
 	IPagination,
@@ -16,10 +17,14 @@ import { TeamRepo } from '@shared/repo';
 export class TeamUC {
 	constructor(private readonly teamRepo: TeamRepo) {}
 
-	async findAll(name: string, pagination: IPagination): Promise<Counted<Team[]>> {
-		const response: Counted<Team[]> = await this.findAll(name, pagination);
+	findAll(name: string, options?: PaginationQuery): Promise<Counted<Team[]>> {
+		return this.teamRepo.findByName(name, { pagination: options });
+	}
 
-		return response;
+	async removeUserFromTeam(teamName: string, userId: EntityId): Promise<Team> {
+		const [team] = await this.teamRepo.findByName(teamName);
+		team[0].removeFromTeam(userId);
+		return team[0];
 	}
 
 	/*
