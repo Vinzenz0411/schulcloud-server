@@ -27,10 +27,18 @@ const getYears = async () => yearModel.find().lean().exec();
 
 const findFederalState = async (abbreviation) => federalStateModel.findOne({ abbreviation }).lean().exec();
 
+const getOfficialSchoolNumberList = async () =>
+	schoolModel
+		.find({ officialSchoolNumber: { $ne: '' } })
+		.distinct('officialSchoolNumber')
+		.lean()
+		.exec();
+
 const SchoolRepo = {
 	createSchool,
 	updateSchoolName,
 	findSchoolByLdapIdAndSystem,
+	getOfficialSchoolNumberList,
 	getYears,
 	findFederalState,
 };

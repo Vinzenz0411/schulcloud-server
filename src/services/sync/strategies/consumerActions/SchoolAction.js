@@ -27,6 +27,13 @@ class SchoolAction extends BaseConsumerAction {
 			return;
 		}
 
+		// do not sync schools which are not ready
+		const officialSchoolNumberList = await SchoolRepo.getOfficialSchoolNumberList();
+		if (officialSchoolNumberList && officialSchoolNumberList.indexOf(schoolData.ldapSchoolIdentifier) !== -1) {
+			// awaiting migration
+			return;
+		}
+
 		// default: create new school
 		schoolData.fileStorageType = this.getDefaultFileStorageType();
 		const createdSchool = await SchoolRepo.createSchool(schoolData);
