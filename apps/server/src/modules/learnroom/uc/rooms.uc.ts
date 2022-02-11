@@ -14,6 +14,7 @@ export class RoomsUc {
 		const user = await this.userRepo.findById(userId, true);
 
 		const course = await this.courseRepo.findOne(roomId, userId);
+		const courseBoard = course.primaryBoard;
 		const isTeacher = this.isTeacher(user, course);
 		const taskFilter = this.taskFilter(isTeacher);
 		const [tasks] = await this.taskRepo.findBySingleParent(course.id, taskFilter);

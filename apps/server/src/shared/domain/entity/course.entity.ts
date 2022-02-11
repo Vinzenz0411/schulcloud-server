@@ -1,4 +1,14 @@
-import { Entity, Property, Index, ManyToOne, ManyToMany, Collection } from '@mikro-orm/core';
+import {
+	Entity,
+	Property,
+	Index,
+	ManyToOne,
+	ManyToMany,
+	Collection,
+	IdentifiedReference,
+	OneToOne,
+	wrap,
+} from '@mikro-orm/core';
 
 import { ILearnroom } from '@shared/domain/interface';
 import { LearnroomMetadata, LearnroomTypes } from '../types';
@@ -56,8 +66,8 @@ export class Course extends BaseEntityWithTimestamps implements ILearnroom {
 	@Property()
 	color: string = DEFAULT.color;
 
-	@Property()
-	primaryBoard: Board;
+	@OneToOne('Board', undefined, { wrappedReference: true })
+	primaryBoard: IdentifiedReference<Board>;
 
 	@Property()
 	startDate?: Date;
@@ -77,7 +87,13 @@ export class Course extends BaseEntityWithTimestamps implements ILearnroom {
 		if (props.color) this.color = props.color;
 		if (props.untilDate) this.untilDate = props.untilDate;
 		if (props.startDate) this.startDate = props.startDate;
-		this.primaryBoard = props.primaryBoard || new Board({ references: [] });
+		const board = props.primaryBoard || new Board({ references: [] });
+		this.primaryBoard = wrap(board).toReference();
+	}
+
+	async getBoard(): Promise<Board> {
+		const board = await this.primaryBoard.load();
+		return board;
 	}
 
 	getNumberOfStudents(): number {
