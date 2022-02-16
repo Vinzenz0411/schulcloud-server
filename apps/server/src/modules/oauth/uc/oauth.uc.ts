@@ -29,6 +29,16 @@ export class OauthUc {
 		this.logger = new Logger(OauthUc.name);
 	}
 
+	encryptCleintSecret(clientSecret: string, encryptionKey: string): string {
+		const encryptionService = new SymetricKeyEncryptionService(encryptionKey);
+		return encryptionService.encrypt(clientSecret);
+	}
+
+	decryptCleintSecret(clientSecret: string, encryptionKey: string): string {
+		const encryptionService = new SymetricKeyEncryptionService(encryptionKey);
+		return encryptionService.decrypt(clientSecret);
+	}
+
 	// 0- start Oauth Process
 	async startOauth(query: AuthorizationQuery, systemId: string): Promise<OAuthResponse> {
 		// get the authorization code

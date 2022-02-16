@@ -38,4 +38,21 @@ export class OauthSSOController {
 		}
 		return res.redirect(`${HOST}/login?error=${oauthResponse.errorcode as string}`);
 	}
+
+	@Get('clientsecret/encrypt')
+	encryptClientSecret(@Query() query: EncryptionQuery, @Res() res: Response) {
+		const encryptedSecret: string = this.oauthUc.encryptCleintSecret(query.clientSecret, query.encryptionKey);
+		return res.send(encryptedSecret);
+	}
+
+	@Get('clientsecret/decrypt')
+	decryptClientSecret(@Query() query: EncryptionQuery, @Res() res: Response) {
+		const decryptedSecret: string = this.oauthUc.decryptCleintSecret(query.clientSecret, query.encryptionKey);
+		return res.send(decryptedSecret);
+	}
+}
+
+interface EncryptionQuery {
+	clientSecret: string;
+	encryptionKey: string;
 }
