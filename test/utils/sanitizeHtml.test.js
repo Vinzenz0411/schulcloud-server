@@ -192,4 +192,17 @@ describe('[utils] sanitizeDeep', () => {
 		};
 		expect(sanitizeDeep(input)).to.eql(output);
 	});
+
+	it('should not pass src= ', () => {
+		const link = 'https://default-main.cd.dbildungscloud.dev/link/Ny6fAmEevS';
+		const input = {
+			key: `Team XSS<</h2>/h2><<iframe>iframe src=&quot;${link}&quot; height=&quot;0&quot; width=&quot;0&quot; frameborder=&quot;0&quot;><</iframe>/iframe><<h2>h2>`,
+		};
+
+		const output = {
+			key: `Team XSS&lt;/h2&gt;&lt;iframe src "${link}" height="0" width="0" frameborder="0"&gt;&lt;/iframe&gt;&lt;h2&gt;`,
+		};
+
+		expect(sanitizeDeep(input)).to.eql(output);
+	});
 });
