@@ -6,10 +6,28 @@
         "$schema": {
             "type": "string"
         },
-        "CLIENT_API_KEY": {
+        "NODE_ENV": {
             "type": "string",
-            "default": "example",
-            "description": "The API Key that the Client uses to send emails. This should be removed with SC-3387"
+            "enum": ["development", "test", "production", "migration"],
+            "default": "production"
+        },
+        "REQUEST_OPTION": {
+            "type": "object",
+            "description": "Request helper options for internal requests.",
+            "properties": {
+                "KEEP_ALIVE": {
+                    "type": "boolean",
+                    "description": "Add Keep-Alive header to the request connection."
+                },
+                "TIMEOUT_MS": {
+                    "type": "integer",
+                    "description": "Outgoing request timeout in milliseconds."
+                }
+            },
+            "default": {
+                "TIMEOUT_MS": 5000,
+                "KEEP_ALIVE": true
+            }
         },
         "CALENDAR_API_KEY": {
             "type": "string",
@@ -226,6 +244,10 @@
                 }
             }
         },
+        "NO_COLOR": {
+            "type": "string",
+            "description": "The value is used to disable logging color in terminal and is set in production always to true. It is not connected to the loggers it self."
+        },
         "FILES_STORAGE": {
             "type": "object",
             "description": "Files storage server properties, required always to be defined",
@@ -236,6 +258,12 @@
                     "format": "uri",
                     "default": "http://localhost:4444",
                     "description": "The URI of the file service"
+                },
+                "INCOMING_REQUEST_TIMEOUT": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 600000,
+                    "description": "Timeout for incoming requests to the File-Storage in milliseconds."
                 },
                 "S3_ENDPOINT": {
                     "type": "string",
@@ -261,6 +289,11 @@
                 }
             }
         },
+        "WOPI_MAX_FILE_SIZE": {
+            "type": "integer",
+            "default": 20971520,
+            "description": "The maximum file size in bytes that can be handled by the WOPI API. Download of larger files throws an error."
+        },
         "FEATURE_IDENTITY_MANAGEMENT_ENABLED": {
             "type": "boolean",
             "default": false,
@@ -269,6 +302,7 @@
         "IDENTITY_MANAGEMENT": {
             "type": "object",
             "description": "Identity management server properties.",
+            "required": ["URI", "TENANT", "CLIENTID", "ADMIN_CLIENTID", "ADMIN_USER", "ADMIN_PASSWORD"],
             "properties": {
                 "URI": {
                     "type": "string",
@@ -279,6 +313,11 @@
                     "type": "string",
                     "default": null,
                     "description": "The ErWIn IDM tenant."
+                },
+                "CLIENTID": {
+                    "type": "string",
+                    "default": null,
+                    "description": "The ErWIn IDM tenant client."
                 },
                 "ADMIN_CLIENTID": {
                     "type": "string",
@@ -374,7 +413,7 @@
         "FEATURE_S3_BUCKET_CORS": {
             "type": "boolean",
             "description": "true if CORS is supported by the S3 bucket. (Minio does not support it)",
-            "default": false
+            "default": true
         },
         "REQUEST_LIMIT_STORAGE_PROVIDER": {
             "type": "integer",
@@ -429,7 +468,12 @@
         "FEATURE_OAUTH_LOGIN": {
             "type": "boolean",
             "default": "false",
-            "description": "The used theming."
+            "description": "Oauth Login Endpoints Enabled."
+        },
+        "FEATURE_LOGIN_LINK_ENABLED": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Login via Link generation (to the right form)."
         },
         "SC_TITLE": {
             "type": "string",
@@ -441,21 +485,28 @@
             "default": "HPI Schul-Cloud",
             "description": "Look to SC_TITLE, it is a possible short form of it."
         },
-        "ADMIN_TOGGLE_STUDENT_VISIBILITY": {
-            "type": "string",
-            "default": "enabled",
-            "enum": ["disabled", "opt-in", "opt-out", "enabled"],
-            "description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
-        },
         "FEATURE_ADMIN_TOGGLE_STUDENT_LERNSTORE_VIEW_ENABLED": {
             "type": "boolean",
             "default": true,
             "description": "Allows school admin to toggle student's LERNSTORE_VIEW permission."
         },
-        "FEATURE_ADMIN_TOGGLE_STUDENT_VISIBILITY_ENABLED": {
-            "type": "boolean",
-            "default": "false",
-            "description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
+        "TEACHER_STUDENT_VISIBILITY": {
+            "type": "object",
+            "description": "Configuration regarding teachers' STUDENT_LIST permission.",
+            "properties": {
+                "IS_CONFIGURABLE": {
+                    "type": "boolean",
+                    "description": "Allows school admin to toggle teachers' STUDENT_LIST permission."
+                },
+                "IS_ENABLED_BY_DEFAULT": {
+                    "type": "boolean",
+                    "description": "Grants teachers STUDENT_LIST permission by default."
+                }
+            },
+            "default": {
+                "IS_CONFIGURABLE": false,
+                "IS_ENABLED_BY_DEFAULT": true
+            }
         },
         "FEATURE_SCHOOL_POLICY_ENABLED": {
             "type": "boolean",
@@ -513,22 +564,22 @@
         },
         "ETHERPAD_URI": {
             "type": "string",
-            "default": "https://hpi-schul-cloud.de/etherpad/api/1",
+            "default": "https://dbildungscloud.de/etherpad/api/1",
             "description": "The etherpad api version uri."
         },
         "ETHERPAD_OLD_PAD_URI": {
             "type": "string",
-            "default": "https://etherpad.hpi-schul-cloud.de/p",
+            "default": "https://etherpad.dbildungscloud.de/p",
             "description": "The etherpad api version uri."
         },
         "ETHERPAD_NEW_PAD_URI": {
             "type": "string",
-            "default": "https://hpi-schul-cloud.de/etherpad/p",
+            "default": "https://dbildungscloud.de/etherpad/p",
             "description": "The etherpad api version uri."
         },
         "ETHERPAD_OLD_PAD_DOMAIN": {
             "type": "string",
-            "default": "etherpad.hpi-schul-cloud.de",
+            "default": "etherpad.dbildungscloud.de",
             "description": "The old etherpad domain."
         },
         "ETHERPAD_COOKIE__EXPIRES_SECONDS": {
@@ -662,11 +713,11 @@
             },
             "required": ["METRICS_PATH", "DURATION_BUCKETS_SECONDS"]
         },
-        "REQUEST_TIMEOUT": {
+        "INCOMING_REQUEST_TIMEOUT_API": {
             "type": "integer",
             "minimum": 0,
             "default": 8000,
-            "description": "Default timeout for external requests in milliseconds."
+            "description": "Timeout for incoming requests to the API in milliseconds."
         },
         "FEATURE_SYNCER_CONSUMER_ENABLE": {
             "type": "boolean",
@@ -689,6 +740,23 @@
             "type": "string",
             "default": "error",
             "description": "Log level for queue based syncers (e.g. LDAP)"
+        },
+        "LOG_LEVEL": {
+            "type": "string",
+            "default": "error",
+            "description": "Log level for api.",
+            "enum": ["emerg", "alert", "crit", "error", "warning", "notice", "info", "debug"]
+        },
+        "NEST_AVAILABLE_LOG_LEVELS": {
+            "type": "string",
+            "default": "error,http",
+            "description": "Nest Log level for api. Different log level can be activated separately by adding the value to the comma separated list. For example 'log,error,warn,debug,verbose,http' The http flag is for request logging. The http flag do only work by api methods with added 'request logging interceptor'."
+        },
+        "SYSTEM_LOG_LEVEL": {
+            "type": "string",
+            "default": "requestError",
+            "description": "Special logs.",
+            "enum": ["requestError", "systemLogs", "request", "sendRequests"]
         },
         "SYNC_QUEUE_NAME": {
             "type": "string",
@@ -717,22 +785,17 @@
         },
         "JWT_AUD": {
             "type": "string",
-            "default": "https://hpi-schul-cloud.de",
+            "default": "https://dbildungscloud.de",
             "description": "It is the organisation web point that is created the jwt and where questions can addressed."
-        },
-        "KEEP_ALIVE": {
-            "type": "boolean",
-            "default": false,
-            "description": "For external request it can set the keep alive header to let open the connection for short period."
         },
         "SUPPORT_PROBLEM_EMAIL_ADDRESS": {
             "type": "string",
-            "default": "ticketsystem@schul-cloud.org",
+            "default": "ticketsystem@dbildungscloud.de",
             "description": "Email address used for reporting a problem"
         },
         "SUPPORT_WISH_EMAIL_ADDRESS": {
             "type": "string",
-            "default": "ticketsystem@schul-cloud.org",
+            "default": "ticketsystem@dbildungscloud.de",
             "description": "Email addresses used for reporting a wish"
         },
         "ADMIN_TABLES_DISPLAY_CONSENT_COLUMN": {
@@ -760,10 +823,15 @@
             "default": "/login",
             "description": "Determines the url to be redirected to when the user is not authenticated"
         },
-        "LEGACY_COURSE_OVERVIEW_ENABLED": {
+        "ROOM_VIEW_ENABLED": {
             "type": "boolean",
             "default": false,
-            "description": "Toggle for legacy course overview."
+            "description": "feature toggle activate Room view link."
+        },
+        "ACCESSIBILITY_REPORT_EMAIL": {
+            "type": "string",
+            "default": "lernen.cloud@dataport.de",
+            "description": "Email to report accessibility issue"
         },
         "FEATURE_COURSE_SHARE": {
             "type": "boolean",
@@ -789,6 +857,11 @@
             "type": "boolean",
             "default": false,
             "description": "Toggle for copy/duplicate a course feature."
+        },
+        "FEATURE_TASK_COPY_ENABLED": {
+            "type": "boolean",
+            "default": false,
+            "description": "Toggle for copy/duplicate a task feature."
         }
     },
     "required": [
@@ -814,9 +887,7 @@
                 }
             },
             "then": {
-                "required": [
-                    "PROMETHEUS"
-                ]
+                "required": ["PROMETHEUS"]
             }
         },
         "FEATURE_USER_MIGRATION_ENABLED": {
@@ -828,9 +899,7 @@
                 }
             },
             "then": {
-                "required": [
-                    "FEATURE_USER_MIGRATION_SYSTEM_ID"
-                ]
+                "required": ["FEATURE_USER_MIGRATION_SYSTEM_ID"]
             }
         },
         "ANTIVIRUS": {
