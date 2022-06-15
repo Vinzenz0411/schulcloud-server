@@ -402,7 +402,7 @@
         },
         "FEATURE_MULTIPLE_S3_PROVIDERS_ENABLED": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "Enables using the storage provider collection to determine a provider with free buckets upon school creation. If disabled, the only storage provider is configured via the environment variables in config/secrets.js"
         },
         "S3_KEY": {
@@ -413,7 +413,7 @@
         "FEATURE_S3_BUCKET_CORS": {
             "type": "boolean",
             "description": "true if CORS is supported by the S3 bucket. (Minio does not support it)",
-            "default": true
+            "default": false
         },
         "REQUEST_LIMIT_STORAGE_PROVIDER": {
             "type": "integer",
