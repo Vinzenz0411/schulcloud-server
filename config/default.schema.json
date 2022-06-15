@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "title": "HPI Schul-Cloud Configuration",
     "type": "object",
     "additionalProperties": false,
@@ -881,912 +880,910 @@
             }
         }
     }
+} ===
+=== =
+"title": "HPI Schul-Cloud Configuration",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+    "$schema": {
+        "type": "string"
+    },
+    "CLIENT_API_KEY": {
+        "type": "string",
+        "default": "example",
+        "description": "The API Key that the Client uses to send emails. This should be removed with SC-3387"
+    },
+    "CALENDAR_API_KEY": {
+        "type": "string",
+        "default": "example",
+        "description": "The API Key that the Calendar uses to resolve scopes. This should be removed with SC-3387"
+    },
+    "CONSENT_AGE_FIRST": {
+        "tpye": "integer",
+        "default": 14,
+        "description": "First gate for consent. Starting at this age the user have to give his/her consent"
+    },
+    "CONSENT_AGE_SECOND": {
+        "tpye": "integer",
+        "default": 16,
+        "description": "Second gate for consent. Starting at this age parent consent is not required"
+    },
+    "DISABLED_BRUTE_FORCE_CHECK": {
+        "type": "boolean",
+        "default": false,
+        "description": "To disabled the brute force prevention hooks for by authentication."
+    },
+    "FORCE_SEND_EMAIL": {
+        "type": "boolean",
+        "default": false,
+        "description": "Send mails to mail service, also if not in production mode"
+    },
+    "I18N": {
+        "type": "object",
+        "description": "Configuration of I18N",
+        "properties": {
+            "DEFAULT_LANGUAGE": {
+                "type": "string",
+                "default": "de",
+                "enum": ["de", "en"],
+                "description": "Value for the default language"
+            },
+            "DEFAULT_TIMEZONE": {
+                "type": "string",
+                "default": "Europe/Berlin",
+                "description": "Timezone"
+            },
+            "FALLBACK_LANGUAGE": {
+                "type": "string",
+                "default": "de",
+                "description": "Value for the fallback language if translation key is not found"
+            },
+            "AVAILABLE_LANGUAGES": {
+                "type": "string",
+                "default": "de,en,es,ua",
+                "description": "Available languages"
+            }
+        }
+    },
+    "SYNC_API_KEY": {
+        "type": "string",
+        "default": "example",
+        "description": "The API Key that the Sync and Mail Cron-Job uses to authenticate itself.This should be removed with SC-3387"
+    },
+    "TEACHER_VISIBILITY_FOR_EXTERNAL_TEAM_INVITATION": {
+        "type": "string",
+        "default": "disabled",
+        "enum": ["disabled", "opt-in", "opt-out", "enabled"],
+        "description": "defines wheter external team invitation shows teachers from different schools or not. if enabled system wide there are options general enabled or opt-in/-out by user required."
+    },
+    "STUDENT_TEAM_CREATION": {
+        "type": "string",
+        "default": "opt-out",
+        "enum": ["disabled", "opt-in", "opt-out", "enabled"],
+        "description": "defines wheter students may create teams or not. if enabled system wide there are options general enabled or opt-in/-out by school admin required."
+    },
+    "REDIS_URI": {
+        "type": "string",
+        "pattern": "(rediss?:)?//((\\w+)?(:.+@)?)?((\\w+)?(:\\w+))?(/d+)?(\\?db=\\d+(&password=.+(&option=.+)*)?)?",
+        "description": "URL of a Redis server. If undefined, JWT whitelisting and timeouts will be disabled. Format: [redis[s]:]//[[user][:password@]][host][:port][/db-number][?db=db-number[&password=bar[&option=value]]]"
+    },
+    "PIN_MAX_AGE_SECONDS": {
+        "type": "integer",
+        "default": 86400,
+        "description": "Maximum time in seconds a generated pin is handled as valid."
+    },
+    "JWT_LIFETIME": {
+        "type": "string",
+        "default": "30d",
+        "pattern": "^[0-9]+d$",
+        "description": "Lifetime of generated JWTs in days."
+    },
+    "JWT_TIMEOUT_SECONDS": {
+        "type": "integer",
+        "default": 7200,
+        "description": "After this many seconds of inactivity, a user gets logged out automatically. If no REDIS_URI is set, this value is ignored."
+    },
+    "FEATURE_JWT_EXTENDED_TIMEOUT_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Using privateDevice parameter in login, the logout/jwt timeout can be extended to JWT_EXTENDED_TIMEOUT_SECONDS instead of JWT_TIMEOUT_SECONDS."
+    },
+    "JWT_EXTENDED_TIMEOUT_SECONDS": {
+        "type": "integer",
+        "default": 2629746,
+        "description": "After this many seconds (default is one month) of inactivity, a user gets logged out when accepted extended login duration. If no REDIS_URI is set, this value is ignored."
+    },
+    "TSP_API_BASE_URL": {
+        "type": "string",
+        "default": "https://www.schulportal-thueringen.de",
+        "description": "The TSP API base URL."
+    },
+    "TSP_API_CLIENT_ID": {
+        "type": "string",
+        "default": "",
+        "description": "The TSP API client id."
+    },
+    "TSP_API_CLIENT_SECRET": {
+        "type": "string",
+        "default": "",
+        "description": "The TSP API client secret."
+    },
+    "TSP_API_ENCRYPTION_KEY": {
+        "type": "string",
+        "default": "",
+        "description": "The key used to encrypt/decrypt TSP request tokens."
+    },
+    "TSP_API_SIGNATURE_KEY": {
+        "type": "string",
+        "default": "",
+        "description": "The key used to sign/verify TSP request tokens."
+    },
+    "FEATURE_TSP_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Feature toggle for TSP features."
+    },
+    "BLOCK_DISPOSABLE_EMAIL_DOMAINS": {
+        "type": "boolean",
+        "default": true,
+        "description": "Prevent use of disposable email addresses."
+    },
+    "ADDITIONAL_BLACKLISTED_EMAIL_DOMAINS": {
+        "type": "string",
+        "description": "Add custom domain to the list of blocked domains (comma separated list)."
+    },
+    "FEATURE_TSP_AUTO_CONSENT_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Feature toggle for automatic consent during TSP sync."
+    },
+    "FEATURE_VIDEOCONFERENCE_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "If enabled, adds video conferences to teams and courses."
+    },
+    "VIDEOCONFERENCE_HOST": {
+        "type": "string",
+        "format": "uri",
+        "pattern": ".*(?<!/)$",
+        "default": "https://bigbluebutton.schul-cloud.org/bigbluebutton",
+        "description": "The BBB base url (should end without a slash)."
+    },
+    "VIDEOCONFERENCE_SALT": {
+        "type": "string",
+        "default": "",
+        "description": "The BBB Salt for api call checksum creation."
+    },
+    "FEATURE_MATRIX_MESSENGER_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "If enabled, adds support for Matrix Messenger."
+    },
+    "MATRIX_MESSENGER": {
+        "type": "object",
+        "description": "Matrix messenger properties, required always to be defined",
+        "required": ["URI", "SERVERNAME", "SECRET", "STUDENT_ROOM_CREATION"],
+        "properties": {
+            "URI": {
+                "type": "string",
+                "format": "uri",
+                "default": "https://matrix.messenger.schule",
+                "description": "The URI of the Matrix Messenger server."
+            },
+            "SERVERNAME": {
+                "type": "string",
+                "default": "messenger.schule",
+                "description": "Servername of the Matrix Messenger server."
+            },
+            "SECRET": {
+                "type": "string",
+                "description": "Shared secret for the Matrix server."
+            },
+            "STUDENT_ROOM_CREATION": {
+                "type": "boolean",
+                "default": false,
+                "description": "If enabled, school admins can allow students to create additional chat rooms"
+            },
+            "SCHOOL_SETTINGS_VISIBLE": {
+                "type": "boolean",
+                "default": false,
+                "description": "Only if enabled, school admins can activate the messenger in their school setting"
+            },
+            "SCHOOL_ROOM_ENABLED": {
+                "type": "boolean",
+                "default": false,
+                "description": "If enabled, school admins can choose to create a room for all students and teachers of the school"
+            },
+            "WELCOME_MESSAGE_ADMIN": {
+                "type": "string",
+                "description": "Greet new admin users with a personal message from the sync bot"
+            },
+            "WELCOME_MESSAGE_TEACHER": {
+                "type": "string",
+                "description": "Greet new teacher users with a personal message from the sync bot"
+            },
+            "WELCOME_MESSAGE_STUDENT": {
+                "type": "string",
+                "description": "Greet new student users with a personal message from the sync bot"
+            }
+        }
+    },
+    "FILES_STORAGE": {
+        "type": "object",
+        "description": "Files storage server properties, required always to be defined",
+        "required": ["S3_ENDPOINT", "S3_REGION", "S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY"],
+        "properties": {
+            "SERVICE_BASE_URL": {
+                "type": "string",
+                "format": "uri",
+                "default": "http://localhost:4444",
+                "description": "The URI of the file service"
+            },
+            "INCOMING_REQUEST_TIMEOUT": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 600000,
+                "description": "Timeout for incoming requests to the File-Storage in milliseconds."
+            },
+            "S3_ENDPOINT": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the S3 provider"
+            },
+            "S3_REGION": {
+                "type": "string",
+                "default": "eu-central-1",
+                "description": "Region name of bucket"
+            },
+            "S3_BUCKET": {
+                "type": "string",
+                "description": "Bucket name"
+            },
+            "S3_ACCESS_KEY_ID": {
+                "type": "string",
+                "description": "Access Key to S3"
+            },
+            "S3_SECRET_ACCESS_KEY": {
+                "type": "string",
+                "description": "Secret key to S3"
+            }
+        }
+    },
+    "FEATURE_IDENTITY_MANAGEMENT_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enables the Identity Management (ErWIn IDM) feature."
+    },
+    "IDENTITY_MANAGEMENT": {
+        "type": "object",
+        "description": "Identity management server properties.",
+        "properties": {
+            "URI": {
+                "type": "string",
+                "default": null,
+                "description": "The ErWIn IDM base URI."
+            },
+            "TENANT": {
+                "type": "string",
+                "default": null,
+                "description": "The ErWIn IDM tenant."
+            },
+            "ADMIN_CLIENTID": {
+                "type": "string",
+                "default": null,
+                "description": "The ErWIn IDM admin client."
+            },
+            "ADMIN_USER": {
+                "type": "string",
+                "default": null,
+                "description": "The ErWIn IDM admin user."
+            },
+            "ADMIN_PASSWORD": {
+                "type": "string",
+                "default": null,
+                "description": "The ErWIn IDM admin password."
+            }
+        }
+    },
+    "FEATURE_RABBITMQ_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "If enabled, adds support to send RabbitMQ messages"
+    },
+    "RABBITMQ_URI": {
+        "type": "string",
+        "format": "uri",
+        "default": "amqp://guest:guest@localhost:5672",
+        "description": "The URI of the RabbitMQ server."
+    },
+    "RABBITMQ_MATRIX_CONSUME_CONCURRENCY": {
+        "type": "integer",
+        "default": 10,
+        "description": "How many messages should be handled at the same time."
+    },
+    "RABBITMQ_MATRIX_QUEUE_INTERNAL": {
+        "type": "string",
+        "default": "matrix_sync_unpopulated",
+        "description": "Name of queue used to buffer building synchronization request internally."
+    },
+    "RABBITMQ_MATRIX_QUEUE_EXTERNAL": {
+        "type": "string",
+        "default": "matrix_sync_populated",
+        "description": "Name of queue used to publish synchronization request."
+    },
+    "HOST": {
+        "type": "string",
+        "format": "uri",
+        "default": "http://localhost:3100",
+        "pattern": ".*(?<!/)$",
+        "description": "The client url (should end without a slash)."
+    },
+    "API_HOST": {
+        "type": "string",
+        "format": "uri",
+        "pattern": ".*(?<!/)$",
+        "description": "The server endpoint, for external calls like Antivirus service. When called from docker container, can be http://host.docker.internal:3030"
+    },
+    "ALERT_STATUS_URL": {
+        "type": "string",
+        "default": null,
+        "description": "The url of status message provider (should end without a slash)."
+    },
+    "NEXBOARD_URL": {
+        "type": "string",
+        "format": "uri",
+        "default": "https://nexboard.nexenio.com",
+        "pattern": ".*(?<!/)$",
+        "description": "The nexboard url."
+    },
+    "NEXBOARD_URI": {
+        "type": "string",
+        "default": "/portal/api/v1/public/",
+        "description": "The nexboard api version uri."
+    },
+    "NEXBOARD_API_KEY": {
+        "type": "string",
+        "description": "The nexboard api key for sending requests."
+    },
+    "NEXBOARD_USER_ID": {
+        "type": "string",
+        "description": "The nexboard 'schul-cloud' userId."
+    },
+    "FEATURE_MULTIPLE_S3_PROVIDERS_ENABLED": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enables using the storage provider collection to determine a provider with free buckets upon school creation. If disabled, the only storage provider is configured via the environment variables in config/secrets.js"
+    },
+    "S3_KEY": {
+        "type": "string",
+        "description": "Synchronous encryption key used to secure storage provider secrets. Only used with FEATURE_MULTIPLE_S3_PROVIDERS_ENABLED=true",
+        "pattern": ".{16}.*"
+    },
+    "FEATURE_S3_BUCKET_CORS": {
+        "type": "boolean",
+        "description": "true if CORS is supported by the S3 bucket. (Minio does not support it)",
+        "default": true
+    },
+    "REQUEST_LIMIT_STORAGE_PROVIDER": {
+        "type": "integer",
+        "default": 100,
+        "description": "Number of objects that can be modified in one request to the storage provider. Must not exceed 1000."
+    },
+    "STORAGE_SIGNED_URL_EXPIRE": {
+        "type": "integer",
+        "default": 60,
+        "description": "Expiration time in seconds for signedUrl used by antivirus"
+    },
+    "ENABLE_FILE_SECURITY_CHECK": {
+        "type": "boolean",
+        "description": "enables antivirus check for files",
+        "default": false
+    },
+    "FILE_SECURITY_CHECK_SERVICE_URI": {
+        "type": "string",
+        "description": "Antivirus file endpoint, only used for legacy file implementation",
+        "format": "uri",
+        "pattern": ".*(?<!/)$"
+    },
+    "FILE_SECURITY_SERVICE_USERNAME": {
+        "type": "string",
+        "description": "Username for the antivirus service, only used for legacy file implementation"
+    },
+    "FILE_SECURITY_SERVICE_PASSWORD": {
+        "type": "string",
+        "description": "Password for the antivirus service, only used for legacy file implementation"
+    },
+    "ANTIVIRUS_EXCHANGE": {
+        "type": "string",
+        "default": "antivirus",
+        "description": "rabbitmq exchange name for antivirus"
+    },
+    "ANTIVIRUS_ROUTING_KEY": {
+        "type": "string",
+        "default": "scan_file",
+        "description": "rabbitmq routing key"
+    },
+    "DOCUMENT_BASE_DIR": {
+        "type": "string",
+        "format": "uri",
+        "default": "https://s3.hidrive.strato.com/cloud-instances/",
+        "description": "Storage url for global documents."
+    },
+    "SC_THEME": {
+        "type": "string",
+        "default": "default",
+        "description": "The used theming."
+    },
+    "FEATURE_OAUTH_LOGIN": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Oauth Login Endpoints Enabled."
+    },
+    "FEATURE_LOGIN_LINK_ENABLED": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Login via Link generation (to the right form)."
+    },
+    "SC_TITLE": {
+        "type": "string",
+        "default": "HPI Schul-Cloud",
+        "description": "The used title."
+    },
+    "SC_SHORT_TITLE": {
+        "type": "string",
+        "default": "HPI Schul-Cloud",
+        "description": "Look to SC_TITLE, it is a possible short form of it."
+    },
+    "ADMIN_TOGGLE_STUDENT_VISIBILITY": {
+        "type": "string",
+        "default": "enabled",
+        "enum": ["disabled", "opt-in", "opt-out", "enabled"],
+        "description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
+    },
+    "FEATURE_ADMIN_TOGGLE_STUDENT_LERNSTORE_VIEW_ENABLED": {
+        "type": "boolean",
+        "default": true,
+        "description": "Allows school admin to toggle student's LERNSTORE_VIEW permission."
+    },
+    "FEATURE_ADMIN_TOGGLE_STUDENT_VISIBILITY_ENABLED": {
+        "type": "boolean",
+        "default": "false",
+        "description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
+    },
+    "FEATURE_SCHOOL_POLICY_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Custom School Policy can be uploaded by the school admin "
+    },
+    "ROCKETCHAT_SERVICE_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enables chat function for the school."
+    },
+    "ROCKET_CHAT_URI": {
+        "type": "string",
+        "default": null,
+        "description": "rocketchat base uri"
+    },
+    "ROCKET_CHAT_ADMIN_ID": {
+        "type": "string",
+        "default": null,
+        "description": "rocketchat admin id"
+    },
+    "ROCKET_CHAT_ADMIN_TOKEN": {
+        "type": "string",
+        "default": null,
+        "description": "rocketchat admin token"
+    },
+    "ROCKET_CHAT_ADMIN_USER": {
+        "type": "string",
+        "default": null,
+        "description": "rocketchat admin user"
+    },
+    "ROCKET_CHAT_ADMIN_PASSWORD": {
+        "type": "string",
+        "default": null,
+        "description": "rocketchat admin password"
+    },
+    "LDAP_PASSWORD_ENCRYPTION_KEY": {
+        "type": "string",
+        "description": "Synchronous encryption key used to secure search user passwords",
+        "pattern": ".{16}.*"
+    },
+    "AES_KEY": {
+        "type": "string",
+        "description": "Symetric encryption key used to encrypt and decrypt secrets.",
+        "pattern": ".{16}.*"
+    },
+    "ETHERPAD_API_KEY": {
+        "type": "string",
+        "description": "The etherpad api key for sending requests."
+    },
+    "ETHERPAD_API_PATH": {
+        "type": "string",
+        "default": "/api/1",
+        "description": "The etherpad api path."
+    },
+    "ETHERPAD_URI": {
+        "type": "string",
+        "default": "https://dbildungscloud.de/etherpad/api/1",
+        "description": "The etherpad api version uri."
+    },
+    "ETHERPAD_OLD_PAD_URI": {
+        "type": "string",
+        "default": "https://etherpad.dbildungscloud.de/p",
+        "description": "The etherpad api version uri."
+    },
+    "ETHERPAD_NEW_PAD_URI": {
+        "type": "string",
+        "default": "https://dbildungscloud.de/etherpad/p",
+        "description": "The etherpad api version uri."
+    },
+    "ETHERPAD_OLD_PAD_DOMAIN": {
+        "type": "string",
+        "default": "etherpad.dbildungscloud.de",
+        "description": "The old etherpad domain."
+    },
+    "ETHERPAD_COOKIE__EXPIRES_SECONDS": {
+        "type": "integer",
+        "default": 28800,
+        "description": "Number of seconds after an etherpad cookie expires."
+    },
+    "ETHERPAD_ETHERPAD_COOKIE_RELEASE_THRESHOLD": {
+        "type": "integer",
+        "default": 7200,
+        "description": "If Session Valid time is smaller than this, a new session is created on request."
+    },
+    "SKIP_CONDITIONS_CONSENT": {
+        "type": "string",
+        "default": "",
+        "description": "A string with concatenated user types (student, employee) that don't need to explicitly state their consent with the terms and conditions. \"employee\" means teachers and admins."
+    },
+    "ACTIVATION_LINK_PERIOD_OF_VALIDITY_SECONDS": {
+        "type": "integer",
+        "default": 7200,
+        "description": "The time in seconds during which the activation link is valid. After expiration the entry is removed from the database"
+    },
+    "ADMIN_MAIL_RECEIVERS": {
+        "type": "string",
+        "default": null,
+        "description": "A string that contains recievers of the daily stat and other mails. Can contain mutliple mails, seperated by comma"
+    },
+    "FEATURE_LERNSTORE_ENABLED": {
+        "type": "boolean",
+        "default": true,
+        "description": "Defines if backend for the Lern-Store Edu-Sharing is enabled."
+    },
+    "ES_DOMAIN": {
+        "type": "string",
+        "format": "uri",
+        "pattern": ".*(?<!/)$",
+        "description": "The URL for the edu-sharing repository.",
+        "default": "https://mv-repo.schul-cloud.org"
+    },
+    "ES_USER": {
+        "type": "string",
+        "description": "The username for edu-sharing api access",
+        "default": ""
+    },
+    "ES_PASSWORD": {
+        "type": "string",
+        "description": "The password for edu-sharing api access",
+        "default": ""
+    },
+    "FEATURE_ES_MERLIN_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "When enabled, the merlin referene will generate a valid url"
+    },
+    "SECRET_ES_MERLIN_USERNAME": {
+        "type": "string",
+        "description": "The username for Merlin login, used for edusharing"
+    },
+    "SECRET_ES_MERLIN_PW": {
+        "type": "string",
+        "description": "The password for Merlin login, used for edusharing"
+    },
+    "ES_MERLIN_AUTH_URL": {
+        "type": "string",
+        "description": "Connection url for Merlin content",
+        "default": "http://merlin.nibis.de/auth.php"
+    },
+    "SECRET_ES_MERLIN_COUNTIES_CREDENTIALS": {
+        "type": "string",
+        "description": "JSON stringified with credentials for merlin counties, used by Lern-Store"
+    },
+    "FEATURE_ES_SEARCHABLE_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "When enabled, only content having searchable flag will be returned by Lern-Store"
+    },
+    "FEATURE_ES_COLLECTIONS_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "When enabled, collections will be searchable in Lern-Store"
+    },
+    "SILENT_ERROR_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Brute force flag during recovery password process"
+    },
+    "FEATURE_API_VALIDATION_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "when enabled, all incoming requests are validated against the openapi schemata, unless the route is whitelisted."
+    },
+    "FEATURE_API_RESPONSE_VALIDATION_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "when enabled, all incoming requests are validated against the openapi schemata, unless the route is whitelisted."
+    },
+    "API_VALIDATION_WHITELIST_EXTENSION": {
+        "type": "string",
+        "description": "when set, this is interpreted as a regex to extend the ignorelist for the API validation with any routes matching the regex.",
+        "examples": [".*/courses/[0-9a-f]{24}($|/$)"]
+    },
+    "FEATURE_PROMETHEUS_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable prometheus api metrics, if enabled, PROMETHEUS must be defined."
+    },
+    "FEATURE_MONGOOSE_LOGGING_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable logging for mongoose database calls."
+    },
+    "PROMETHEUS": {
+        "type": "object",
+        "description": "Prometheus metrics options used by prometheus-api-metrics",
+        "properties": {
+            "METRICS_PATH": {
+                "type": "string",
+                "default": "/metrics",
+                "description": "public metrics route",
+                "pattern": ".*(?<!/)$"
+            },
+            "DURATION_BUCKETS_SECONDS": {
+                "type": "array",
+                "items": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "default": [0.01, 0.05, 0.1, 0.2, 0.5, 0.75, 1, 3, 5, 8, 15, 30, 60, 120],
+                "description": "Times to define buckets by seconds which contain all requests with max. the given amount of time. Must be in ascending order. "
+            }
+        },
+        "required": ["METRICS_PATH", "DURATION_BUCKETS_SECONDS"]
+    },
+    "REQUEST_TIMEOUT": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 8000,
+        "description": "Timeout for outgoing requests from server to external systems in milliseconds."
+    },
+    "INCOMING_REQUEST_TIMEOUT_API": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 8000,
+        "description": "Timeout for incoming requests to the API in milliseconds."
+    },
+    "FEATURE_SYNCER_CONSUMER_ENABLE": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable consumer for queued sync messages"
+    },
+    "LDAP_SYSTEM_SYNCER_POOL_SIZE": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "Determines how many system syncers will be run in parallel (at most) during the LDAP sync."
+    },
+    "LDAP_SCHOOL_SYNCER_POOL_SIZE": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "Determines how many school syncers will be run in parallel (at most) during the LDAP sync."
+    },
+    "SYNC_LOG_LEVEL": {
+        "type": "string",
+        "default": "error",
+        "description": "Log level for queue based syncers (e.g. LDAP)"
+    },
+    "SYNC_QUEUE_NAME": {
+        "type": "string",
+        "default": "sync_ldap",
+        "description": "Queue name for sync"
+    },
+    "MAIL_SEND_EXCHANGE": {
+        "type": "string",
+        "default": "mail-drop",
+        "description": "Exchange name for mail sending"
+    },
+    "MAIL_SEND_ROUTING_KEY": {
+        "type": "string",
+        "default": "mail-drop",
+        "description": "Routing key name for mail sending"
+    },
+    "MEMORY_INTERVAL_TIME": {
+        "type": "integer",
+        "default": 0,
+        "description": "Is the time for logging memory metrics to log in >secounds<. Default 0 will disable the logging."
+    },
+    "REQUEST_LOGGING_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enabled that every request is logged with the information route and method"
+    },
+    "JWT_AUD": {
+        "type": "string",
+        "default": "https://dbildungscloud.de",
+        "description": "It is the organisation web point that is created the jwt and where questions can addressed."
+    },
+    "KEEP_ALIVE": {
+        "type": "boolean",
+        "default": false,
+        "description": "For external request it can set the keep alive header to let open the connection for short period."
+    },
+    "SUPPORT_PROBLEM_EMAIL_ADDRESS": {
+        "type": "string",
+        "default": "ticketsystem@dbildungscloud.de",
+        "description": "Email address used for reporting a problem"
+    },
+    "SUPPORT_WISH_EMAIL_ADDRESS": {
+        "type": "string",
+        "default": "ticketsystem@dbildungscloud.de",
+        "description": "Email addresses used for reporting a wish"
+    },
+    "ADMIN_TABLES_DISPLAY_CONSENT_COLUMN": {
+        "type": "boolean",
+        "default": true,
+        "description": "Display/Hide admin tables consent column"
+    },
+    "JWT_SHOW_TIMEOUT_WARNING_SECONDS": {
+        "type": "integer",
+        "default": 3600,
+        "description": "Determines the time in seconds to show the timeout warning in the client"
+    },
+    "FEATURE_EXTENSIONS_ENABLED": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enables user's use of extensions in the client"
+    },
+    "FEATURE_TEAMS_ENABLED": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enables user's use of the teams feature in the client"
+    },
+    "NOT_AUTHENTICATED_REDIRECT_URL": {
+        "type": "string",
+        "default": "/login",
+        "description": "Determines the url to be redirected to when the user is not authenticated"
+    },
+    "LEGACY_COURSE_OVERVIEW_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Toggle for legacy course overview."
+    },
+    "ROOM_VIEW_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "feature toggle activate Room view link."
+    },
+    "FEATURE_COURSE_SHARE": {
+        "type": "boolean",
+        "default": false,
+        "description": "Toggle for course sharing feature."
+    },
+    "FEATURE_LESSON_SHARE": {
+        "type": "boolean",
+        "default": false,
+        "description": "Toggle for lesson sharing feature."
+    },
+    "FEATURE_USER_MIGRATION_ENABLED": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable user migration page for admin to bind ldap accounts to local accounts"
+    },
+    "FEATURE_USER_MIGRATION_SYSTEM_ID": {
+        "type": "string",
+        "default": "",
+        "description": "SystemId for migration of users from system"
+    },
+    "FEATURE_COURSE_COPY": {
+        "type": "boolean",
+        "default": false,
+        "description": "Toggle for copy/duplicate a course feature."
+    }
+},
+"required": [
+    "TEACHER_VISIBILITY_FOR_EXTERNAL_TEAM_INVITATION",
+    "STUDENT_TEAM_CREATION",
+    "BLOCK_DISPOSABLE_EMAIL_DOMAINS",
+    "HOST",
+    "ACTIVATION_LINK_PERIOD_OF_VALIDITY_SECONDS",
+    "AES_KEY"
+],
+"allOf": [{
+    "$ref": "#/definitions/FEATURE_PROMETHEUS_ENABLED",
+    "$ref": "#/definitions/FEATURE_ES_MERLIN_ENABLED",
+    "$ref": "#/definitions/ANTIVIRUS"
+}],
+"definitions": {
+    "FEATURE_PROMETHEUS_ENABLED": {
+        "if": {
+            "properties": {
+                "FEATURE_PROMETHEUS_ENABLED": {
+                    "const": true
+                }
+            }
+        },
+        "then": {
+            "required": [
+                "PROMETHEUS"
+            ]
+        }
+    },
+    "FEATURE_USER_MIGRATION_ENABLED": {
+        "if": {
+            "properties": {
+                "FEATURE_USER_MIGRATION_ENABLED": {
+                    "const": true
+                }
+            }
+        },
+        "then": {
+            "required": [
+                "FEATURE_USER_MIGRATION_SYSTEM_ID"
+            ]
+        }
+    },
+    "ANTIVIRUS": {
+        "if": {
+            "properties": {
+                "ENABLE_FILE_SECURITY_CHECK": {
+                    "const": true
+                }
+            }
+        },
+        "then": {
+            "required": [
+                "FILE_SECURITY_CHECK_SERVICE_URI",
+                "FILE_SECURITY_SERVICE_USERNAME",
+                "FILE_SECURITY_SERVICE_PASSWORD",
+                "API_HOST"
+            ]
+        }
+    },
+    "LERNSTORE_ENABLED": {
+        "if": {
+            "properties": {
+                "FEATURE_LERNSTORE_ENABLED": {
+                    "const": true
+                }
+            }
+        },
+        "then": {
+            "required": ["ES_USER", "ES_PASSWORD"]
+        }
+    },
+    "FEATURE_ES_MERLIN_ENABLED": {
+        "if": {
+            "properties": {
+                "FEATURE_ES_MERLIN_ENABLED": {
+                    "const": true
+                }
+            }
+        },
+        "then": {
+            "required": [
+                "SECRET_ES_MERLIN_USERNAME",
+                "SECRET_ES_MERLIN_PW",
+                "ES_MERLIN_AUTH_URL",
+                "SECRET_ES_MERLIN_COUNTIES_CREDENTIALS"
+            ]
+        }
+    }
 }
-=======
-	"title": "HPI Schul-Cloud Configuration",
-	"type": "object",
-	"additionalProperties": false,
-	"properties": {
-		"$schema": {
-			"type": "string"
-		},
-		"CLIENT_API_KEY": {
-			"type": "string",
-			"default": "example",
-			"description": "The API Key that the Client uses to send emails. This should be removed with SC-3387"
-		},
-		"CALENDAR_API_KEY": {
-			"type": "string",
-			"default": "example",
-			"description": "The API Key that the Calendar uses to resolve scopes. This should be removed with SC-3387"
-		},
-		"CONSENT_AGE_FIRST": {
-			"tpye": "integer",
-			"default": 14,
-			"description": "First gate for consent. Starting at this age the user have to give his/her consent"
-		},
-		"CONSENT_AGE_SECOND": {
-			"tpye": "integer",
-			"default": 16,
-			"description": "Second gate for consent. Starting at this age parent consent is not required"
-		},
-		"DISABLED_BRUTE_FORCE_CHECK": {
-			"type": "boolean",
-			"default": false,
-			"description": "To disabled the brute force prevention hooks for by authentication."
-		},
-		"FORCE_SEND_EMAIL": {
-			"type": "boolean",
-			"default": false,
-			"description": "Send mails to mail service, also if not in production mode"
-		},
-		"I18N": {
-			"type": "object",
-			"description": "Configuration of I18N",
-			"properties": {
-				"DEFAULT_LANGUAGE": {
-					"type": "string",
-					"default": "de",
-					"enum": ["de", "en"],
-					"description": "Value for the default language"
-				},
-				"DEFAULT_TIMEZONE": {
-					"type": "string",
-					"default": "Europe/Berlin",
-					"description": "Timezone"
-				},
-				"FALLBACK_LANGUAGE": {
-					"type": "string",
-					"default": "de",
-					"description": "Value for the fallback language if translation key is not found"
-				},
-				"AVAILABLE_LANGUAGES": {
-					"type": "string",
-					"default": "de,en,es,ua",
-					"description": "Available languages"
-				}
-			}
-		},
-		"SYNC_API_KEY": {
-			"type": "string",
-			"default": "example",
-			"description": "The API Key that the Sync and Mail Cron-Job uses to authenticate itself.This should be removed with SC-3387"
-		},
-		"TEACHER_VISIBILITY_FOR_EXTERNAL_TEAM_INVITATION": {
-			"type": "string",
-			"default": "disabled",
-			"enum": ["disabled", "opt-in", "opt-out", "enabled"],
-			"description": "defines wheter external team invitation shows teachers from different schools or not. if enabled system wide there are options general enabled or opt-in/-out by user required."
-		},
-		"STUDENT_TEAM_CREATION": {
-			"type": "string",
-			"default": "opt-out",
-			"enum": ["disabled", "opt-in", "opt-out", "enabled"],
-			"description": "defines wheter students may create teams or not. if enabled system wide there are options general enabled or opt-in/-out by school admin required."
-		},
-		"REDIS_URI": {
-			"type": "string",
-			"pattern": "(rediss?:)?//((\\w+)?(:.+@)?)?((\\w+)?(:\\w+))?(/d+)?(\\?db=\\d+(&password=.+(&option=.+)*)?)?",
-			"description": "URL of a Redis server. If undefined, JWT whitelisting and timeouts will be disabled. Format: [redis[s]:]//[[user][:password@]][host][:port][/db-number][?db=db-number[&password=bar[&option=value]]]"
-		},
-		"PIN_MAX_AGE_SECONDS": {
-			"type": "integer",
-			"default": 86400,
-			"description": "Maximum time in seconds a generated pin is handled as valid."
-		},
-		"JWT_LIFETIME": {
-			"type": "string",
-			"default": "30d",
-			"pattern": "^[0-9]+d$",
-			"description": "Lifetime of generated JWTs in days."
-		},
-		"JWT_TIMEOUT_SECONDS": {
-			"type": "integer",
-			"default": 7200,
-			"description": "After this many seconds of inactivity, a user gets logged out automatically. If no REDIS_URI is set, this value is ignored."
-		},
-		"FEATURE_JWT_EXTENDED_TIMEOUT_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Using privateDevice parameter in login, the logout/jwt timeout can be extended to JWT_EXTENDED_TIMEOUT_SECONDS instead of JWT_TIMEOUT_SECONDS."
-		},
-		"JWT_EXTENDED_TIMEOUT_SECONDS": {
-			"type": "integer",
-			"default": 2629746,
-			"description": "After this many seconds (default is one month) of inactivity, a user gets logged out when accepted extended login duration. If no REDIS_URI is set, this value is ignored."
-		},
-		"TSP_API_BASE_URL": {
-			"type": "string",
-			"default": "https://www.schulportal-thueringen.de",
-			"description": "The TSP API base URL."
-		},
-		"TSP_API_CLIENT_ID": {
-			"type": "string",
-			"default": "",
-			"description": "The TSP API client id."
-		},
-		"TSP_API_CLIENT_SECRET": {
-			"type": "string",
-			"default": "",
-			"description": "The TSP API client secret."
-		},
-		"TSP_API_ENCRYPTION_KEY": {
-			"type": "string",
-			"default": "",
-			"description": "The key used to encrypt/decrypt TSP request tokens."
-		},
-		"TSP_API_SIGNATURE_KEY": {
-			"type": "string",
-			"default": "",
-			"description": "The key used to sign/verify TSP request tokens."
-		},
-		"FEATURE_TSP_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Feature toggle for TSP features."
-		},
-		"BLOCK_DISPOSABLE_EMAIL_DOMAINS": {
-			"type": "boolean",
-			"default": true,
-			"description": "Prevent use of disposable email addresses."
-		},
-		"ADDITIONAL_BLACKLISTED_EMAIL_DOMAINS": {
-			"type": "string",
-			"description": "Add custom domain to the list of blocked domains (comma separated list)."
-		},
-		"FEATURE_TSP_AUTO_CONSENT_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Feature toggle for automatic consent during TSP sync."
-		},
-		"FEATURE_VIDEOCONFERENCE_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "If enabled, adds video conferences to teams and courses."
-		},
-		"VIDEOCONFERENCE_HOST": {
-			"type": "string",
-			"format": "uri",
-			"pattern": ".*(?<!/)$",
-			"default": "https://bigbluebutton.schul-cloud.org/bigbluebutton",
-			"description": "The BBB base url (should end without a slash)."
-		},
-		"VIDEOCONFERENCE_SALT": {
-			"type": "string",
-			"default": "",
-			"description": "The BBB Salt for api call checksum creation."
-		},
-		"FEATURE_MATRIX_MESSENGER_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "If enabled, adds support for Matrix Messenger."
-		},
-		"MATRIX_MESSENGER": {
-			"type": "object",
-			"description": "Matrix messenger properties, required always to be defined",
-			"required": ["URI", "SERVERNAME", "SECRET", "STUDENT_ROOM_CREATION"],
-			"properties": {
-				"URI": {
-					"type": "string",
-					"format": "uri",
-					"default": "https://matrix.messenger.schule",
-					"description": "The URI of the Matrix Messenger server."
-				},
-				"SERVERNAME": {
-					"type": "string",
-					"default": "messenger.schule",
-					"description": "Servername of the Matrix Messenger server."
-				},
-				"SECRET": {
-					"type": "string",
-					"description": "Shared secret for the Matrix server."
-				},
-				"STUDENT_ROOM_CREATION": {
-					"type": "boolean",
-					"default": false,
-					"description": "If enabled, school admins can allow students to create additional chat rooms"
-				},
-				"SCHOOL_SETTINGS_VISIBLE": {
-					"type": "boolean",
-					"default": false,
-					"description": "Only if enabled, school admins can activate the messenger in their school setting"
-				},
-				"SCHOOL_ROOM_ENABLED": {
-					"type": "boolean",
-					"default": false,
-					"description": "If enabled, school admins can choose to create a room for all students and teachers of the school"
-				},
-				"WELCOME_MESSAGE_ADMIN": {
-					"type": "string",
-					"description": "Greet new admin users with a personal message from the sync bot"
-				},
-				"WELCOME_MESSAGE_TEACHER": {
-					"type": "string",
-					"description": "Greet new teacher users with a personal message from the sync bot"
-				},
-				"WELCOME_MESSAGE_STUDENT": {
-					"type": "string",
-					"description": "Greet new student users with a personal message from the sync bot"
-				}
-			}
-		},
-		"FILES_STORAGE": {
-			"type": "object",
-			"description": "Files storage server properties, required always to be defined",
-			"required": ["S3_ENDPOINT", "S3_REGION", "S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY"],
-			"properties": {
-				"SERVICE_BASE_URL": {
-					"type": "string",
-					"format": "uri",
-					"default": "http://localhost:4444",
-					"description": "The URI of the file service"
-				},
-				"INCOMING_REQUEST_TIMEOUT": {
-					"type": "integer",
-					"minimum": 0,
-					"default": 600000,
-					"description": "Timeout for incoming requests to the File-Storage in milliseconds."
-				},
-				"S3_ENDPOINT": {
-					"type": "string",
-					"format": "uri",
-					"description": "The URI of the S3 provider"
-				},
-				"S3_REGION": {
-					"type": "string",
-					"default": "eu-central-1",
-					"description": "Region name of bucket"
-				},
-				"S3_BUCKET": {
-					"type": "string",
-					"description": "Bucket name"
-				},
-				"S3_ACCESS_KEY_ID": {
-					"type": "string",
-					"description": "Access Key to S3"
-				},
-				"S3_SECRET_ACCESS_KEY": {
-					"type": "string",
-					"description": "Secret key to S3"
-				}
-			}
-		},
-		"FEATURE_IDENTITY_MANAGEMENT_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enables the Identity Management (ErWIn IDM) feature."
-		},
-		"IDENTITY_MANAGEMENT": {
-			"type": "object",
-			"description": "Identity management server properties.",
-			"properties": {
-				"URI": {
-					"type": "string",
-					"default" : null,
-					"description": "The ErWIn IDM base URI."
-				},
-				"TENANT": {
-					"type": "string",
-					"default": null,
-					"description": "The ErWIn IDM tenant."
-				},
-				"ADMIN_CLIENTID": {
-					"type": "string",
-					"default": null,
-					"description": "The ErWIn IDM admin client."
-				},
-				"ADMIN_USER": {
-					"type": "string",
-					"default": null,
-					"description": "The ErWIn IDM admin user."
-				},
-				"ADMIN_PASSWORD": {
-					"type": "string",
-					"default": null,
-					"description": "The ErWIn IDM admin password."
-				}
-			}
-		},
-		"FEATURE_RABBITMQ_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "If enabled, adds support to send RabbitMQ messages"
-		},
-		"RABBITMQ_URI": {
-			"type": "string",
-			"format": "uri",
-			"default": "amqp://guest:guest@localhost:5672",
-			"description": "The URI of the RabbitMQ server."
-		},
-		"RABBITMQ_MATRIX_CONSUME_CONCURRENCY": {
-			"type": "integer",
-			"default": 10,
-			"description": "How many messages should be handled at the same time."
-		},
-		"RABBITMQ_MATRIX_QUEUE_INTERNAL": {
-			"type": "string",
-			"default": "matrix_sync_unpopulated",
-			"description": "Name of queue used to buffer building synchronization request internally."
-		},
-		"RABBITMQ_MATRIX_QUEUE_EXTERNAL": {
-			"type": "string",
-			"default": "matrix_sync_populated",
-			"description": "Name of queue used to publish synchronization request."
-		},
-		"HOST": {
-			"type": "string",
-			"format": "uri",
-			"default": "http://localhost:3100",
-			"pattern": ".*(?<!/)$",
-			"description": "The client url (should end without a slash)."
-		},
-		"API_HOST": {
-			"type": "string",
-			"format": "uri",
-			"pattern": ".*(?<!/)$",
-			"description": "The server endpoint, for external calls like Antivirus service. When called from docker container, can be http://host.docker.internal:3030"
-		},
-		"ALERT_STATUS_URL": {
-			"type": "string",
-			"default": null,
-			"description": "The url of status message provider (should end without a slash)."
-		},
-		"NEXBOARD_URL": {
-			"type": "string",
-			"format": "uri",
-			"default": "https://nexboard.nexenio.com",
-			"pattern": ".*(?<!/)$",
-			"description": "The nexboard url."
-		},
-		"NEXBOARD_URI": {
-			"type": "string",
-			"default": "/portal/api/v1/public/",
-			"description": "The nexboard api version uri."
-		},
-		"NEXBOARD_API_KEY": {
-			"type": "string",
-			"description": "The nexboard api key for sending requests."
-		},
-		"NEXBOARD_USER_ID": {
-			"type": "string",
-			"description": "The nexboard 'schul-cloud' userId."
-		},
-		"FEATURE_MULTIPLE_S3_PROVIDERS_ENABLED": {
-			"type": "boolean",
-			"default": true,
-			"description": "Enables using the storage provider collection to determine a provider with free buckets upon school creation. If disabled, the only storage provider is configured via the environment variables in config/secrets.js"
-		},
-		"S3_KEY": {
-			"type": "string",
-			"description": "Synchronous encryption key used to secure storage provider secrets. Only used with FEATURE_MULTIPLE_S3_PROVIDERS_ENABLED=true",
-			"pattern": ".{16}.*"
-		},
-		"FEATURE_S3_BUCKET_CORS": {
-			"type": "boolean",
-			"description": "true if CORS is supported by the S3 bucket. (Minio does not support it)",
-			"default": true
-		},
-		"REQUEST_LIMIT_STORAGE_PROVIDER": {
-			"type": "integer",
-			"default": 100,
-			"description": "Number of objects that can be modified in one request to the storage provider. Must not exceed 1000."
-		},
-		"STORAGE_SIGNED_URL_EXPIRE": {
-			"type": "integer",
-			"default": 60,
-			"description": "Expiration time in seconds for signedUrl used by antivirus"
-		},
-		"ENABLE_FILE_SECURITY_CHECK": {
-			"type": "boolean",
-			"description": "enables antivirus check for files",
-			"default": false
-		},
-		"FILE_SECURITY_CHECK_SERVICE_URI": {
-			"type": "string",
-			"description": "Antivirus file endpoint, only used for legacy file implementation",
-			"format": "uri",
-			"pattern": ".*(?<!/)$"
-		},
-		"FILE_SECURITY_SERVICE_USERNAME": {
-			"type": "string",
-			"description": "Username for the antivirus service, only used for legacy file implementation"
-		},
-		"FILE_SECURITY_SERVICE_PASSWORD": {
-			"type": "string",
-			"description": "Password for the antivirus service, only used for legacy file implementation"
-		},
-		"ANTIVIRUS_EXCHANGE": {
-			"type": "string",
-			"default": "antivirus",
-			"description": "rabbitmq exchange name for antivirus"
-		},
-		"ANTIVIRUS_ROUTING_KEY": {
-			"type": "string",
-			"default": "scan_file",
-			"description": "rabbitmq routing key"
-		},
-		"DOCUMENT_BASE_DIR": {
-			"type": "string",
-			"format": "uri",
-			"default": "https://s3.hidrive.strato.com/cloud-instances/",
-			"description": "Storage url for global documents."
-		},
-		"SC_THEME": {
-			"type": "string",
-			"default": "default",
-			"description": "The used theming."
-		},
-		"FEATURE_OAUTH_LOGIN": {
-			"type": "boolean",
-			"default": "false",
-			"description": "Oauth Login Endpoints Enabled."
-		},
-		"FEATURE_LOGIN_LINK_ENABLED": {
-			"type": "boolean",
-			"default": "false",
-			"description": "Login via Link generation (to the right form)."
-		},
-		"SC_TITLE": {
-			"type": "string",
-			"default": "HPI Schul-Cloud",
-			"description": "The used title."
-		},
-		"SC_SHORT_TITLE": {
-			"type": "string",
-			"default": "HPI Schul-Cloud",
-			"description": "Look to SC_TITLE, it is a possible short form of it."
-		},
-		"ADMIN_TOGGLE_STUDENT_VISIBILITY": {
-			"type": "string",
-			"default": "enabled",
-			"enum": ["disabled", "opt-in", "opt-out", "enabled"],
-			"description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
-		},
-		"FEATURE_ADMIN_TOGGLE_STUDENT_LERNSTORE_VIEW_ENABLED": {
-			"type": "boolean",
-			"default": true,
-			"description": "Allows school admin to toggle student's LERNSTORE_VIEW permission."
-		},
-		"FEATURE_ADMIN_TOGGLE_STUDENT_VISIBILITY_ENABLED": {
-			"type": "boolean",
-			"default": "false",
-			"description": "Allows school admin to toggle teacher's STUDENT_LIST permission."
-		},
-		"FEATURE_SCHOOL_POLICY_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Custom School Policy can be uploaded by the school admin "
-		},
-		"ROCKETCHAT_SERVICE_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enables chat function for the school."
-		},
-		"ROCKET_CHAT_URI": {
-			"type": "string",
-			"default": null,
-			"description": "rocketchat base uri"
-		},
-		"ROCKET_CHAT_ADMIN_ID": {
-			"type": "string",
-			"default": null,
-			"description": "rocketchat admin id"
-		},
-		"ROCKET_CHAT_ADMIN_TOKEN": {
-			"type": "string",
-			"default": null,
-			"description": "rocketchat admin token"
-		},
-		"ROCKET_CHAT_ADMIN_USER": {
-			"type": "string",
-			"default": null,
-			"description": "rocketchat admin user"
-		},
-		"ROCKET_CHAT_ADMIN_PASSWORD": {
-			"type": "string",
-			"default": null,
-			"description": "rocketchat admin password"
-		},
-		"LDAP_PASSWORD_ENCRYPTION_KEY": {
-			"type": "string",
-			"description": "Synchronous encryption key used to secure search user passwords",
-			"pattern": ".{16}.*"
-		},
-		"AES_KEY": {
-			"type": "string",
-			"description": "Symetric encryption key used to encrypt and decrypt secrets.",
-			"pattern": ".{16}.*"
-		},
-		"ETHERPAD_API_KEY": {
-			"type": "string",
-			"description": "The etherpad api key for sending requests."
-		},
-		"ETHERPAD_API_PATH": {
-			"type": "string",
-			"default": "/api/1",
-			"description": "The etherpad api path."
-		},
-		"ETHERPAD_URI": {
-			"type": "string",
-			"default": "https://dbildungscloud.de/etherpad/api/1",
-			"description": "The etherpad api version uri."
-		},
-		"ETHERPAD_OLD_PAD_URI": {
-			"type": "string",
-			"default": "https://etherpad.dbildungscloud.de/p",
-			"description": "The etherpad api version uri."
-		},
-		"ETHERPAD_NEW_PAD_URI": {
-			"type": "string",
-			"default": "https://dbildungscloud.de/etherpad/p",
-			"description": "The etherpad api version uri."
-		},
-		"ETHERPAD_OLD_PAD_DOMAIN": {
-			"type": "string",
-			"default": "etherpad.dbildungscloud.de",
-			"description": "The old etherpad domain."
-		},
-		"ETHERPAD_COOKIE__EXPIRES_SECONDS": {
-			"type": "integer",
-			"default": 28800,
-			"description": "Number of seconds after an etherpad cookie expires."
-		},
-		"ETHERPAD_ETHERPAD_COOKIE_RELEASE_THRESHOLD": {
-			"type": "integer",
-			"default": 7200,
-			"description": "If Session Valid time is smaller than this, a new session is created on request."
-		},
-		"SKIP_CONDITIONS_CONSENT": {
-			"type": "string",
-			"default": "",
-			"description": "A string with concatenated user types (student, employee) that don't need to explicitly state their consent with the terms and conditions. \"employee\" means teachers and admins."
-		},
-		"ACTIVATION_LINK_PERIOD_OF_VALIDITY_SECONDS": {
-			"type": "integer",
-			"default": 7200,
-			"description": "The time in seconds during which the activation link is valid. After expiration the entry is removed from the database"
-		},
-		"ADMIN_MAIL_RECEIVERS": {
-			"type": "string",
-			"default": null,
-			"description": "A string that contains recievers of the daily stat and other mails. Can contain mutliple mails, seperated by comma"
-		},
-		"FEATURE_LERNSTORE_ENABLED": {
-			"type": "boolean",
-			"default": true,
-			"description": "Defines if backend for the Lern-Store Edu-Sharing is enabled."
-		},
-		"ES_DOMAIN": {
-			"type": "string",
-			"format": "uri",
-			"pattern": ".*(?<!/)$",
-			"description": "The URL for the edu-sharing repository.",
-			"default": "https://mv-repo.schul-cloud.org"
-		},
-		"ES_USER": {
-			"type": "string",
-			"description": "The username for edu-sharing api access",
-			"default": ""
-		},
-		"ES_PASSWORD": {
-			"type": "string",
-			"description": "The password for edu-sharing api access",
-			"default": ""
-		},
-		"FEATURE_ES_MERLIN_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "When enabled, the merlin referene will generate a valid url"
-		},
-		"SECRET_ES_MERLIN_USERNAME": {
-			"type": "string",
-			"description": "The username for Merlin login, used for edusharing"
-		},
-		"SECRET_ES_MERLIN_PW": {
-			"type": "string",
-			"description": "The password for Merlin login, used for edusharing"
-		},
-		"ES_MERLIN_AUTH_URL": {
-			"type": "string",
-			"description": "Connection url for Merlin content",
-			"default": "http://merlin.nibis.de/auth.php"
-		},
-		"SECRET_ES_MERLIN_COUNTIES_CREDENTIALS": {
-			"type": "string",
-			"description": "JSON stringified with credentials for merlin counties, used by Lern-Store"
-		},
-		"FEATURE_ES_SEARCHABLE_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "When enabled, only content having searchable flag will be returned by Lern-Store"
-		},
-		"FEATURE_ES_COLLECTIONS_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "When enabled, collections will be searchable in Lern-Store"
-		},
-		"SILENT_ERROR_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Brute force flag during recovery password process"
-		},
-		"FEATURE_API_VALIDATION_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "when enabled, all incoming requests are validated against the openapi schemata, unless the route is whitelisted."
-		},
-		"FEATURE_API_RESPONSE_VALIDATION_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "when enabled, all incoming requests are validated against the openapi schemata, unless the route is whitelisted."
-		},
-		"API_VALIDATION_WHITELIST_EXTENSION": {
-			"type": "string",
-			"description": "when set, this is interpreted as a regex to extend the ignorelist for the API validation with any routes matching the regex.",
-			"examples": [".*/courses/[0-9a-f]{24}($|/$)"]
-		},
-		"FEATURE_PROMETHEUS_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enable prometheus api metrics, if enabled, PROMETHEUS must be defined."
-		},
-		"FEATURE_MONGOOSE_LOGGING_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enable logging for mongoose database calls."
-		},
-		"PROMETHEUS": {
-			"type": "object",
-			"description": "Prometheus metrics options used by prometheus-api-metrics",
-			"properties": {
-				"METRICS_PATH": {
-					"type": "string",
-					"default": "/metrics",
-					"description": "public metrics route",
-					"pattern": ".*(?<!/)$"
-				},
-				"DURATION_BUCKETS_SECONDS": {
-					"type": "array",
-					"items": {
-						"type": "number",
-						"minimum": 0
-					},
-					"default": [0.01, 0.05, 0.1, 0.2, 0.5, 0.75, 1, 3, 5, 8, 15, 30, 60, 120],
-					"description": "Times to define buckets by seconds which contain all requests with max. the given amount of time. Must be in ascending order. "
-				}
-			},
-			"required": ["METRICS_PATH", "DURATION_BUCKETS_SECONDS"]
-		},
-		"REQUEST_TIMEOUT": {
-			"type": "integer",
-			"minimum": 0,
-			"default": 8000,
-			"description": "Timeout for outgoing requests from server to external systems in milliseconds."
-		},
-		"INCOMING_REQUEST_TIMEOUT_API": {
-			"type": "integer",
-			"minimum": 0,
-			"default": 8000,
-			"description": "Timeout for incoming requests to the API in milliseconds."
-		},
-		"FEATURE_SYNCER_CONSUMER_ENABLE": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enable consumer for queued sync messages"
-		},
-		"LDAP_SYSTEM_SYNCER_POOL_SIZE": {
-			"type": "integer",
-			"minimum": 1,
-			"default": 1,
-			"description": "Determines how many system syncers will be run in parallel (at most) during the LDAP sync."
-		},
-		"LDAP_SCHOOL_SYNCER_POOL_SIZE": {
-			"type": "integer",
-			"minimum": 1,
-			"default": 1,
-			"description": "Determines how many school syncers will be run in parallel (at most) during the LDAP sync."
-		},
-		"SYNC_LOG_LEVEL": {
-			"type": "string",
-			"default": "error",
-			"description": "Log level for queue based syncers (e.g. LDAP)"
-		},
-		"SYNC_QUEUE_NAME": {
-			"type": "string",
-			"default": "sync_ldap",
-			"description": "Queue name for sync"
-		},
-		"MAIL_SEND_EXCHANGE": {
-			"type": "string",
-			"default": "mail-drop",
-			"description": "Exchange name for mail sending"
-		},
-		"MAIL_SEND_ROUTING_KEY": {
-			"type": "string",
-			"default": "mail-drop",
-			"description": "Routing key name for mail sending"
-		},
-		"MEMORY_INTERVAL_TIME": {
-			"type": "integer",
-			"default": 0,
-			"description": "Is the time for logging memory metrics to log in >secounds<. Default 0 will disable the logging."
-		},
-		"REQUEST_LOGGING_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enabled that every request is logged with the information route and method"
-		},
-		"JWT_AUD": {
-			"type": "string",
-			"default": "https://dbildungscloud.de",
-			"description": "It is the organisation web point that is created the jwt and where questions can addressed."
-		},
-		"KEEP_ALIVE": {
-			"type": "boolean",
-			"default": false,
-			"description": "For external request it can set the keep alive header to let open the connection for short period."
-		},
-		"SUPPORT_PROBLEM_EMAIL_ADDRESS": {
-			"type": "string",
-			"default": "ticketsystem@dbildungscloud.de",
-			"description": "Email address used for reporting a problem"
-		},
-		"SUPPORT_WISH_EMAIL_ADDRESS": {
-			"type": "string",
-			"default": "ticketsystem@dbildungscloud.de",
-			"description": "Email addresses used for reporting a wish"
-		},
-		"ADMIN_TABLES_DISPLAY_CONSENT_COLUMN": {
-			"type": "boolean",
-			"default": true,
-			"description": "Display/Hide admin tables consent column"
-		},
-		"JWT_SHOW_TIMEOUT_WARNING_SECONDS": {
-			"type": "integer",
-			"default": 3600,
-			"description": "Determines the time in seconds to show the timeout warning in the client"
-		},
-		"FEATURE_EXTENSIONS_ENABLED": {
-			"type": "boolean",
-			"default": true,
-			"description": "Enables user's use of extensions in the client"
-		},
-		"FEATURE_TEAMS_ENABLED": {
-			"type": "boolean",
-			"default": true,
-			"description": "Enables user's use of the teams feature in the client"
-		},
-		"NOT_AUTHENTICATED_REDIRECT_URL": {
-			"type": "string",
-			"default": "/login",
-			"description": "Determines the url to be redirected to when the user is not authenticated"
-		},
-		"LEGACY_COURSE_OVERVIEW_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Toggle for legacy course overview."
-		},
-		"ROOM_VIEW_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "feature toggle activate Room view link."
-		},
-		"FEATURE_COURSE_SHARE": {
-			"type": "boolean",
-			"default": false,
-			"description": "Toggle for course sharing feature."
-		},
-		"FEATURE_LESSON_SHARE": {
-			"type": "boolean",
-			"default": false,
-			"description": "Toggle for lesson sharing feature."
-		},
-		"FEATURE_USER_MIGRATION_ENABLED": {
-			"type": "boolean",
-			"default": false,
-			"description": "Enable user migration page for admin to bind ldap accounts to local accounts"
-		},
-		"FEATURE_USER_MIGRATION_SYSTEM_ID": {
-			"type": "string",
-			"default": "",
-			"description": "SystemId for migration of users from system"
-		},
-		"FEATURE_COURSE_COPY": {
-			"type": "boolean",
-			"default": false,
-			"description": "Toggle for copy/duplicate a course feature."
-		}
-	},
-	"required": [
-		"TEACHER_VISIBILITY_FOR_EXTERNAL_TEAM_INVITATION",
-		"STUDENT_TEAM_CREATION",
-		"BLOCK_DISPOSABLE_EMAIL_DOMAINS",
-		"HOST",
-		"ACTIVATION_LINK_PERIOD_OF_VALIDITY_SECONDS",
-		"AES_KEY"
-	],
-	"allOf": [
-		{
-			"$ref": "#/definitions/FEATURE_PROMETHEUS_ENABLED",
-			"$ref": "#/definitions/FEATURE_ES_MERLIN_ENABLED",
-			"$ref": "#/definitions/ANTIVIRUS"
-		}
-	],
-	"definitions": {
-		"FEATURE_PROMETHEUS_ENABLED": {
-			"if": {
-				"properties": {
-					"FEATURE_PROMETHEUS_ENABLED": {
-						"const": true
-					}
-				}
-			},
-			"then": {
-				"required": [
-					"PROMETHEUS"
-				]
-			}
-		},
-		"FEATURE_USER_MIGRATION_ENABLED": {
-			"if": {
-				"properties": {
-					"FEATURE_USER_MIGRATION_ENABLED": {
-						"const": true
-					}
-				}
-			},
-			"then": {
-				"required": [
-					"FEATURE_USER_MIGRATION_SYSTEM_ID"
-				]
-			}
-		},
-		"ANTIVIRUS": {
-			"if": {
-				"properties": {
-					"ENABLE_FILE_SECURITY_CHECK": {
-						"const": true
-					}
-				}
-			},
-			"then": {
-				"required": [
-					"FILE_SECURITY_CHECK_SERVICE_URI",
-					"FILE_SECURITY_SERVICE_USERNAME",
-					"FILE_SECURITY_SERVICE_PASSWORD",
-					"API_HOST"
-				]
-			}
-		},
-		"LERNSTORE_ENABLED": {
-			"if": {
-				"properties": {
-					"FEATURE_LERNSTORE_ENABLED": {
-						"const": true
-					}
-				}
-			},
-			"then": {
-				"required": ["ES_USER", "ES_PASSWORD"]
-			}
-		},
-		"FEATURE_ES_MERLIN_ENABLED": {
-			"if": {
-				"properties": {
-					"FEATURE_ES_MERLIN_ENABLED": {
-						"const": true
-					}
-				}
-			},
-			"then": {
-				"required": [
-					"SECRET_ES_MERLIN_USERNAME",
-					"SECRET_ES_MERLIN_PW",
-					"ES_MERLIN_AUTH_URL",
-					"SECRET_ES_MERLIN_COUNTIES_CREDENTIALS"
-				]
-			}
-		}
-	}
-}
->>>>>>> 7229219842ab18722971fea8e1a79c3acf0c1d55
+} >>>
+>>> > 7229219842 ab18722971fea8e1a79c3acf0c1d55
