@@ -880,8 +880,8 @@
             }
         }
     }
-} ===
-=== =
+}
+
 "title": "HPI Schul-Cloud Configuration",
 "type": "object",
 "additionalProperties": false,
@@ -1786,4 +1786,5 @@
     }
 }
 } >>>
->>> > 7229219842 ab18722971fea8e1a79c3acf0c1d55
+>>>
+> 7229219842 ab18722971fea8e1a79c3acf0c1d55
