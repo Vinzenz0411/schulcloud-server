@@ -79,7 +79,7 @@ module.exports = {
 					color: {
 						$switch: {
 							branches: [
-								{ case: { $eq: ['$color', '#ACACAC'] }, then: '#54616e' },
+								{ case: { $eq: ['$color', '#ACACAC'] }, then: '#5672A1e' },
 								{ case: { $eq: ['$color', '#D4AF37'] }, then: '#827717' },
 								{ case: { $eq: ['$color', '#00E5FF'] }, then: '#0091EA' },
 								{ case: { $eq: ['$color', '#1DE9B6'] }, then: '#009688' },
@@ -89,7 +89,7 @@ module.exports = {
 								{ case: { $eq: ['$color', '#FF4081'] }, then: '#EC407A' },
 								{ case: { $eq: ['$color', '#FFEE58'] }, then: '#EF6C00' },
 							],
-							default: '#54616e',
+							default: '#5672A1',
 						},
 					},
 				},
